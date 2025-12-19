@@ -36,6 +36,51 @@ class FrameCounter {
   styleUrl: './game-test.css',
 })
 export class GameTestComponent implements AfterViewInit {
+  @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+  private ctx!: CanvasRenderingContext2D;
+  @ViewChild('offCanvas', { static: true }) offCanvas!: ElementRef<HTMLCanvasElement>;
+  private offCtx!: CanvasRenderingContext2D;
+
+  currentSeed = signal<string>('');
+  lastSeed = signal<string>('');
+  speedFactor = signal<number>(1);
+  isPaused = signal<boolean>(true);
+  rnd = seedrandom('');
+
+  FRAME_DURATION = 1 / 15; // ms per frame
+  lastFrameTime = 0;
+  lastDeltaTime = signal<number>(0);
+
+  frameCounter = new FrameCounter();
+  currentFps = signal<number>(0);
+  fpsFrames = 0;
+  fpsTime = 0;
+
+  boundsOffset = 100;
+  canvasWidth = 800; //TODO use these info to create a canvas element instead of having it in the .html
+  canvasHeight = 600;
+  initialDeadProbability = 96;
+  wantedZoom = signal<number>(1);
+  gridWidth = 0;
+  gridHeight = 0;
+  currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+  nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+  zone = inject(NgZone);
+
+  init() {
+    this.gridWidth = this.canvasWidth + this.boundsOffset;
+    this.gridHeight = this.canvasHeight + this.boundsOffset;
+    this.currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+    this.nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState.setAtIndex(i, this.rnd() * 100 > this.initialDeadProbability);
+    }
+  }
+
+  onZoomChange() {
+    this.initCanvasTransform();
+  }
+
   onRestartClick() {
     this.rnd = seedrandom(this.currentSeed());
     this.init();
@@ -54,46 +99,7 @@ export class GameTestComponent implements AfterViewInit {
   onNextGenerationClick() {
     this.isPaused.set(true);
     this.update(0);
-  }
-
-  onSpeedChange() {}
-  @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
-  private ctx!: CanvasRenderingContext2D;
-
-  currentSeed = signal<string>('');
-  lastSeed = signal<string>('');
-  speedFactor = signal<number>(1);
-  isPaused = signal<boolean>(true);
-  rnd = seedrandom('');
-
-  FRAME_DURATION = 1 / 15; // ms per frame
-  lastFrameTime = 0;
-  lastDeltaTime = signal<number>(0);
-
-  frameCounter = new FrameCounter();
-  currentFps = signal<number>(0);
-  fpsFrames = 0;
-  fpsTime = 0;
-
-  boundsOffset = 20;
-  canvasWidth = 800; //TODO use these info to create a canvas element instead of having it in the .html
-  canvasHeight = 600;
-  initialDeadProbability = 96;
-  wantedZoom = 1;
-  gridWidth = 0;
-  gridHeight = 0;
-  currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
-  nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
-  zone = inject(NgZone);
-
-  init() {
-    this.gridWidth = this.canvasWidth + this.boundsOffset;
-    this.gridHeight = this.canvasHeight + this.boundsOffset;
-    this.currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
-    this.nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
-    for (let i = 0; i < this.currentState.length; i++) {
-      this.currentState.setAtIndex(i, this.rnd() * 100 > this.initialDeadProbability);
-    }
+    this.draw();
   }
 
   initCanvas() {
@@ -101,13 +107,24 @@ export class GameTestComponent implements AfterViewInit {
     if (!this.ctx) {
       return;
     }
-    this.ctx.scale(this.wantedZoom, this.wantedZoom);
+
+    this.offCtx = this.offCanvas.nativeElement.getContext('2d')!;
+    if (!this.offCtx) {
+      return;
+    }
+    this.initCanvasTransform();
+  }
+
+  initCanvasTransform() {
+    this.ctx.resetTransform();
+    this.ctx.scale(this.wantedZoom(), this.wantedZoom());
     this.ctx.translate(-this.boundsOffset * 0.5, -this.boundsOffset * 0.5);
   }
 
   ngAfterViewInit(): void {
     this.initCanvas();
     this.init();
+    this.draw();
     this.zone.runOutsideAngular(() => {
       requestAnimationFrame((t) => this.gameLoop(t));
     });
@@ -121,7 +138,9 @@ export class GameTestComponent implements AfterViewInit {
 
     if (deltaTime * this.speedFactor() > this.FRAME_DURATION) {
       this.lastFrameTime = time;
-      if (!this.isPaused()) this.update(deltaTime);
+      if (!this.isPaused()) {
+        this.update(deltaTime);
+      }
       this.draw();
     }
 
@@ -168,14 +187,53 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   draw() {
-    this.ctx.clearRect(0, 0, this.gridWidth, this.gridHeight);
+    //this.drawWithFillRect();
+    this.drawWithImage();
+  }
 
+  drawWithFillRect() {
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(0, 0, this.gridWidth, this.gridHeight);
+    this.ctx.fillStyle = 'yellow';
     for (let i = 0; i < this.currentState.length; i++) {
       let isAlive = this.currentState.getByIndex(i);
-      this.ctx.fillStyle = isAlive ? 'yellow' : 'black';
-
-      let coords = this.currentState.indexToCoords(i);
-      this.ctx.fillRect(coords.column, coords.row, 1, 1);
+      if (isAlive) {
+        let coords = this.currentState.indexToCoords(i);
+        this.ctx.fillRect(coords.column, coords.row, 1, 1);
+      }
     }
+  }
+
+  imageBuffer?: ImageData;
+  drawWithImage() {
+    if (!this.imageBuffer) {
+      this.imageBuffer = this.ctx.createImageData(this.gridWidth, this.gridHeight);
+      for (let i = 0; i < this.currentState.length; i++) {
+        const idx = i * 4;
+        this.imageBuffer.data[idx] = 255;
+        this.imageBuffer.data[idx + 1] = 255;
+      }
+    }
+
+    for (let i = 0; i < this.currentState.length; i++) {
+      const alive = this.currentState.getByIndex(i);
+      const idx = i * 4;
+
+      if (alive) {
+        this.imageBuffer.data[idx + 3] = 255;
+      } else {
+        this.imageBuffer.data[idx + 3] = 0;
+      }
+    }
+
+    this.offCtx.putImageData(this.imageBuffer, 0, 0);
+
+    this.ctx.imageSmoothingEnabled = false;
+    this.ctx.fillRect(0, 0, this.gridWidth, this.gridHeight);
+    this.ctx.drawImage(
+      this.offCanvas.nativeElement,
+      this.boundsOffset * 0.5,
+      this.boundsOffset * 0.5
+    );
   }
 }

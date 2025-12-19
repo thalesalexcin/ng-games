@@ -32,9 +32,20 @@
           type="range"
           step="0.05"
           min="0"
-          max="2"
+          max="4"
           [(ngModel)]="speedFactor"
-          (change)="onSpeedChange()"
+        />
+      </div>
+      <div>
+        <label class="form-label" for="">Zoom</label>
+        <input
+          class="bg-dark form-range"
+          type="range"
+          step="0.1"
+          min="1"
+          max="4"
+          [(ngModel)]="wantedZoom"
+          (input)="onZoomChange()"
         />
       </div>
 
@@ -45,5 +56,6 @@
       </div>
     </div>
     <canvas class="border shadow" #gameCanvas width="800" height="600"></canvas>
+    <canvas #offCanvas width="800" height="600" class="d-none"></canvas>
   </div>
 </div>
