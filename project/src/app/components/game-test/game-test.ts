@@ -86,10 +86,14 @@ export class GameTestComponent implements AfterViewInit {
     this.init();
   }
   onGenerateNewClick() {
+    this.generateNewSeed();
+    this.init();
+  }
+
+  generateNewSeed() {
     this.lastSeed.set(this.currentSeed());
     this.currentSeed.set(Math.floor(Math.random() * 3541684621335).toString());
     this.rnd = seedrandom(this.currentSeed());
-    this.init();
   }
 
   onStartPauseClick() {
@@ -123,6 +127,7 @@ export class GameTestComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initCanvas();
+    this.generateNewSeed();
     this.init();
     this.draw();
     this.zone.runOutsideAngular(() => {
