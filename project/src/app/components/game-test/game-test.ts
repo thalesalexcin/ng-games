@@ -191,26 +191,8 @@ export class GameTestComponent implements AfterViewInit {
     this.currentState = this.nextState.copy();
   }
 
-  draw() {
-    //this.drawWithFillRect();
-    this.drawWithImage();
-  }
-
-  drawWithFillRect() {
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillRect(0, 0, this.gridWidth, this.gridHeight);
-    this.ctx.fillStyle = 'yellow';
-    for (let i = 0; i < this.currentState.length; i++) {
-      let isAlive = this.currentState.getByIndex(i);
-      if (isAlive) {
-        let coords = this.currentState.indexToCoords(i);
-        this.ctx.fillRect(coords.column, coords.row, 1, 1);
-      }
-    }
-  }
-
   imageBuffer?: ImageData;
-  drawWithImage() {
+  draw() {
     if (!this.imageBuffer) {
       this.imageBuffer = this.ctx.createImageData(this.gridWidth, this.gridHeight);
       for (let i = 0; i < this.currentState.length; i++) {
