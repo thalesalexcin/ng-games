@@ -75,35 +75,42 @@ export class GameTestComponent implements AfterViewInit {
   fpsFrames = 0;
   fpsTime = 0;
 
-  width = 200;
-  height = 150;
-  currentState = new Grid<boolean>(150, 200, false);
-  nextState = new Grid<boolean>(150, 200, false);
+  boundsOffset = 20;
+  canvasWidth = 800; //TODO use these info to create a canvas element instead of having it in the .html
+  canvasHeight = 600;
+  initialDeadProbability = 96;
+  wantedZoom = 1;
+  gridWidth = 0;
+  gridHeight = 0;
+  currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+  nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
   zone = inject(NgZone);
 
-  ngAfterViewInit(): void {
+  init() {
+    this.gridWidth = this.canvasWidth + this.boundsOffset;
+    this.gridHeight = this.canvasHeight + this.boundsOffset;
+    this.currentState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+    this.nextState = new Grid<boolean>(this.gridHeight, this.gridWidth, false);
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState.setAtIndex(i, this.rnd() * 100 > this.initialDeadProbability);
+    }
+  }
+
+  initCanvas() {
     this.ctx = this.canvas.nativeElement.getContext('2d')!;
     if (!this.ctx) {
       return;
     }
-    this.ctx.scale(4, 4);
-
-    this.lastSeed.set(this.currentSeed());
-    this.currentSeed.set(Math.floor(Math.random() * 3541684621335).toString());
-    this.rnd = seedrandom(this.currentSeed());
-
-    this.zone.runOutsideAngular(() => {
-      this.init();
-      requestAnimationFrame((t) => this.gameLoop(t));
-    });
+    this.ctx.scale(this.wantedZoom, this.wantedZoom);
+    this.ctx.translate(-this.boundsOffset * 0.5, -this.boundsOffset * 0.5);
   }
 
-  init() {
-    this.currentState = new Grid<boolean>(150, 200, false);
-    this.nextState = new Grid<boolean>(150, 200, false);
-    for (let i = 0; i < this.currentState.length; i++) {
-      this.currentState.setAtIndex(i, this.rnd() * 100 > 96);
-    }
+  ngAfterViewInit(): void {
+    this.initCanvas();
+    this.init();
+    this.zone.runOutsideAngular(() => {
+      requestAnimationFrame((t) => this.gameLoop(t));
+    });
   }
 
   gameLoop(time: number) {
@@ -161,7 +168,7 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   draw() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.ctx.clearRect(0, 0, this.gridWidth, this.gridHeight);
 
     for (let i = 0; i < this.currentState.length; i++) {
       let isAlive = this.currentState.getByIndex(i);
