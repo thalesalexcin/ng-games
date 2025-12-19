@@ -47,6 +47,8 @@
                   "maximumError": "8kB"
                 }
               ],
+              "outputPath": "../build",
+              "baseHref": "/ng-games/",
               "outputHashing": "all"
             },
             "development": {
