@@ -79,6 +79,7 @@ export class GameTestComponent implements AfterViewInit {
 
   onZoomChange() {
     this.initCanvasTransform();
+    this.draw();
   }
 
   onRestartClick() {
@@ -111,6 +112,8 @@ export class GameTestComponent implements AfterViewInit {
     if (!this.ctx) {
       return;
     }
+
+    this.ctx.imageSmoothingEnabled = false;
 
     this.offCtx = this.offCanvas.nativeElement.getContext('2d')!;
     if (!this.offCtx) {
@@ -145,10 +148,9 @@ export class GameTestComponent implements AfterViewInit {
       this.lastFrameTime = time;
       if (!this.isPaused()) {
         this.update(deltaTime);
+        this.draw();
       }
-      this.draw();
     }
-
     requestAnimationFrame((t) => this.gameLoop(t));
   }
 
@@ -201,6 +203,7 @@ export class GameTestComponent implements AfterViewInit {
         this.imageBuffer.data[idx + 1] = 255;
       }
     }
+    this.ctx.fillRect(0, 0, this.gridWidth, this.gridHeight);
 
     for (let i = 0; i < this.currentState.length; i++) {
       const alive = this.currentState.getByIndex(i);
@@ -215,8 +218,6 @@ export class GameTestComponent implements AfterViewInit {
 
     this.offCtx.putImageData(this.imageBuffer, 0, 0);
 
-    this.ctx.imageSmoothingEnabled = false;
-    this.ctx.fillRect(0, 0, this.gridWidth, this.gridHeight);
     this.ctx.drawImage(
       this.offCanvas.nativeElement,
       this.boundsOffset * 0.5,
