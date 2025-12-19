@@ -85,10 +85,12 @@ export class GameTestComponent implements AfterViewInit {
   onRestartClick() {
     this.rnd = seedrandom(this.currentSeed());
     this.init();
+    this.draw();
   }
   onGenerateNewClick() {
     this.generateNewSeed();
     this.init();
+    this.draw();
   }
 
   generateNewSeed() {
