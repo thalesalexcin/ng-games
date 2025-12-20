@@ -55,7 +55,16 @@
         <label for="">Last Seed</label>
       </div>
     </div>
-    <canvas class="border shadow" #gameCanvas width="800" height="600"></canvas>
-    <canvas #offCanvas width="800" height="600" class="d-none"></canvas>
+    <canvas
+      class="border shadow"
+      #gameCanvas
+      [width]="canvasWidth"
+      [height]="canvasHeight"
+    ></canvas>
+    <app-cells
+      [width]="canvasWidth"
+      [height]="canvasHeight"
+      [boundsOffset]="boundsOffset"
+    ></app-cells>
   </div>
 </div>
