@@ -1,33 +1,29 @@
-import { AfterViewInit, Component, ElementRef, inject, input, viewChild } from '@angular/core';
+import { inject } from '@angular/core';
 import { Grid, GridCoords } from '../../classes/grid';
 import { RandomService } from '../../services/random-service';
 import { MathEx } from '../../classes/math-ex';
 
-@Component({
-  selector: 'app-cells',
-  imports: [],
-  templateUrl: './cells.html',
-  styleUrl: './cells.css',
-})
-export class CellsComponent implements AfterViewInit {
-  currentState!: Grid<boolean>;
-  nextState!: Grid<boolean>;
-  offsets: GridCoords[];
+export class CellsComponent {
+  private currentState!: Grid<boolean>;
+  private nextState!: Grid<boolean>;
+  private offsets: GridCoords[];
 
-  offCanvas!: OffscreenCanvas;
-  offCtx!: OffscreenCanvasRenderingContext2D;
-  imageBuffer!: ImageData;
+  private offCanvas!: OffscreenCanvas;
+  private offCtx!: OffscreenCanvasRenderingContext2D;
+  private imageBuffer!: ImageData;
 
-  width = input.required<number>();
-  height = input.required<number>();
-  rows: number = 0;
-  columns: number = 0;
+  private rows: number;
+  private columns: number;
 
-  screenOffset = input.required<number>();
+  private screenOffset: number;
 
-  randomService = inject(RandomService);
+  private randomService: RandomService;
 
-  constructor() {
+  constructor(private width: number, private height: number) {
+    this.randomService = inject(RandomService);
+    this.screenOffset = 0;
+    this.rows = this.height;
+    this.columns = this.width;
     this.offsets = [
       { row: -1, column: -1 },
       { row: -1, column: 0 },
@@ -38,32 +34,23 @@ export class CellsComponent implements AfterViewInit {
       { row: 1, column: 0 },
       { row: 1, column: 1 },
     ];
-  }
-
-  ngAfterViewInit(): void {
-    this.rows = this.height() + this.screenOffset();
-    this.columns = this.width() + this.screenOffset();
-
-    this.reset();
 
     this.offCanvas = new OffscreenCanvas(this.columns, this.rows);
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
+
+    this.currentState = new Grid<boolean>(this.rows, this.columns, false);
+    this.nextState = new Grid<boolean>(this.rows, this.columns, false);
+
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState.setAtIndex(i, this.randomService.rnd() * 100 > 93);
+    }
 
     this.imageBuffer = this.offCtx.createImageData(this.columns, this.rows);
     for (let i = 0; i < this.currentState.length; i++) {
       const idx = i * 4;
       this.imageBuffer.data[idx] = 255;
       this.imageBuffer.data[idx + 1] = 255;
-    }
-  }
-
-  reset() {
-    this.currentState = new Grid<boolean>(this.rows, this.columns, false);
-    this.nextState = new Grid<boolean>(this.rows, this.columns, false);
-
-    for (let i = 0; i < this.currentState.length; i++) {
-      this.currentState.setAtIndex(i, this.randomService.rnd() * 100 > 96);
     }
   }
 
@@ -106,12 +93,8 @@ export class CellsComponent implements AfterViewInit {
       }
     }
 
-    this.offCtx.fillRect(0, 0, this.width(), this.height());
-    this.offCtx.putImageData(
-      this.imageBuffer,
-      -this.screenOffset() * 0.5,
-      -this.screenOffset() * 0.5
-    );
+    this.offCtx.fillRect(0, 0, this.width, this.height);
+    this.offCtx.putImageData(this.imageBuffer, -this.screenOffset * 0.5, -this.screenOffset * 0.5);
 
     ctx.drawImage(this.offCanvas, 0, 0, this.imageBuffer.width, this.imageBuffer.height);
   }

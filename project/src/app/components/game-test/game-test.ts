@@ -3,7 +3,9 @@ import {
   Component,
   ElementRef,
   inject,
+  Injector,
   NgZone,
+  runInInjectionContext,
   signal,
   viewChild,
   ViewChild,
@@ -15,7 +17,7 @@ import { RandomService } from '../../services/random-service';
 
 @Component({
   selector: 'app-game-test',
-  imports: [FormsModule, CellsComponent],
+  imports: [FormsModule],
   templateUrl: './game-test.html',
   styleUrl: './game-test.css',
 })
@@ -24,7 +26,7 @@ export class GameTestComponent implements AfterViewInit {
   private ctx!: CanvasRenderingContext2D;
 
   //TODO viewChildren with a base component. Or have here a list of "objects" with their own logic and components
-  private cells = viewChild.required(CellsComponent);
+  private cells!: CellsComponent;
 
   canvasWidth = 800;
   canvasHeight = 600;
@@ -45,9 +47,12 @@ export class GameTestComponent implements AfterViewInit {
   lastFrameTime = 0;
 
   zone = inject(NgZone);
+  injector = inject(Injector);
 
   init() {
-    this.cells().reset();
+    runInInjectionContext(this.injector, () => {
+      this.cells = new CellsComponent(this.canvasWidth, this.canvasHeight);
+    });
   }
 
   onZoomChange() {
@@ -120,11 +125,11 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   update(deltaTime: number) {
-    this.cells().update(deltaTime);
+    this.cells.update(deltaTime);
   }
 
   draw() {
     this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this.cells().draw(this.ctx);
+    this.cells.draw(this.ctx);
   }
 }
