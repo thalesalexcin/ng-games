@@ -1,3 +1,5 @@
+import { MathEx } from './math-ex';
+
 export interface GridCoords {
   row: number;
   column: number;
@@ -63,19 +65,10 @@ export class Grid<T> {
   indexToCoords(index: number): GridCoords {
     let coords: GridCoords = {
       row: Math.floor(index / this.columns),
-      column: this.mod(index, this.columns),
+      column: MathEx.mod(index, this.columns),
     };
 
     return coords;
-  }
-
-  /**
-   * @param n Current number to apply the modulo
-   * @param m The modulo
-   * @returns A positive number between 0 and m
-   */
-  mod(n: number, m: number): number {
-    return ((n % m) + m) % m;
   }
 
   get length(): number {

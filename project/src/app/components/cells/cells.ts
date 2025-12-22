@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, inject, input, viewChild } from '@angular/core';
 import { Grid, GridCoords } from '../../classes/grid';
 import { RandomService } from '../../services/random-service';
+import { MathEx } from '../../classes/math-ex';
 
 @Component({
   selector: 'app-cells',
@@ -11,10 +12,10 @@ import { RandomService } from '../../services/random-service';
 export class CellsComponent implements AfterViewInit {
   currentState!: Grid<boolean>;
   nextState!: Grid<boolean>;
-  offsets!: GridCoords[];
+  offsets: GridCoords[];
 
-  offCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('offCanvas');
-  offCtx!: CanvasRenderingContext2D;
+  offCanvas!: OffscreenCanvas;
+  offCtx!: OffscreenCanvasRenderingContext2D;
   imageBuffer!: ImageData;
 
   width = input.required<number>();
@@ -22,16 +23,11 @@ export class CellsComponent implements AfterViewInit {
   rows: number = 0;
   columns: number = 0;
 
-  boundsOffset = input.required<number>();
+  screenOffset = input.required<number>();
 
   randomService = inject(RandomService);
 
-  ngAfterViewInit(): void {
-    this.rows = this.height() + this.boundsOffset();
-    this.columns = this.width() + this.boundsOffset();
-
-    this.reset();
-
+  constructor() {
     this.offsets = [
       { row: -1, column: -1 },
       { row: -1, column: 0 },
@@ -42,8 +38,18 @@ export class CellsComponent implements AfterViewInit {
       { row: 1, column: 0 },
       { row: 1, column: 1 },
     ];
+  }
 
-    this.offCtx = this.offCanvas().nativeElement.getContext('2d')!;
+  ngAfterViewInit(): void {
+    this.rows = this.height() + this.screenOffset();
+    this.columns = this.width() + this.screenOffset();
+
+    this.reset();
+
+    this.offCanvas = new OffscreenCanvas(this.columns, this.rows);
+    this.offCtx = this.offCanvas.getContext('2d')!;
+    this.offCtx.imageSmoothingEnabled = false;
+
     this.imageBuffer = this.offCtx.createImageData(this.columns, this.rows);
     for (let i = 0; i < this.currentState.length; i++) {
       const idx = i * 4;
@@ -70,19 +76,18 @@ export class CellsComponent implements AfterViewInit {
           column: currentCoord.column + offset.column,
           row: currentCoord.row + offset.row,
         };
-        if (!this.currentState.isValidCoords(offsetCoord)) continue;
+
+        offsetCoord.column = MathEx.mod(offsetCoord.column, this.columns);
+        offsetCoord.row = MathEx.mod(offsetCoord.row, this.rows);
+
         if (this.currentState.get(offsetCoord)) aliveCount++;
       }
 
       let isAlive = this.currentState.getByIndex(i);
-      if (isAlive && aliveCount < 2) {
-        this.nextState.setAtIndex(i, false);
-      } else if (isAlive && (aliveCount == 2 || aliveCount == 3)) {
-        this.nextState.setAtIndex(i, true);
-      } else if (isAlive && aliveCount > 3) {
-        this.nextState.setAtIndex(i, false);
-      } else if (!isAlive && aliveCount == 3) {
-        this.nextState.setAtIndex(i, true);
+      if (isAlive) {
+        this.nextState.setAtIndex(i, aliveCount == 2 || aliveCount == 3);
+      } else {
+        this.nextState.setAtIndex(i, aliveCount == 3);
       }
     }
 
@@ -90,8 +95,6 @@ export class CellsComponent implements AfterViewInit {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillRect(0, 0, this.columns, this.rows);
-
     for (let i = 0; i < this.currentState.length; i++) {
       const alive = this.currentState.getByIndex(i);
       const idx = i * 4;
@@ -103,12 +106,13 @@ export class CellsComponent implements AfterViewInit {
       }
     }
 
-    this.offCtx.putImageData(this.imageBuffer, 0, 0);
-
-    ctx.drawImage(
-      this.offCanvas().nativeElement,
-      this.boundsOffset() * 0.5,
-      this.boundsOffset() * 0.5
+    this.offCtx.fillRect(0, 0, this.width(), this.height());
+    this.offCtx.putImageData(
+      this.imageBuffer,
+      -this.screenOffset() * 0.5,
+      -this.screenOffset() * 0.5
     );
+
+    ctx.drawImage(this.offCanvas, 0, 0, this.imageBuffer.width, this.imageBuffer.height);
   }
 }

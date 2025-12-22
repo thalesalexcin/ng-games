@@ -23,24 +23,28 @@ export class GameTestComponent implements AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   private ctx!: CanvasRenderingContext2D;
 
+  //TODO viewChildren with a base component. Or have here a list of "objects" with their own logic and components
   private cells = viewChild.required(CellsComponent);
 
   canvasWidth = 800;
   canvasHeight = 600;
-  boundsOffset = 100;
+  //TODO cells related, move it to CellsComponent
+  boundsOffset = 0;
 
+  //TODO game state related, move to its own component / store
   currentSeed = signal<string>('');
   lastSeed = signal<string>('');
   speedFactor = signal<number>(1);
   isPaused = signal<boolean>(false);
+  randomService = inject(RandomService);
+
+  //TODO camera related, move to its own component
   wantedZoom = signal<number>(1);
 
   FRAME_DURATION = 1 / 15; // ms per frame
   lastFrameTime = 0;
 
   zone = inject(NgZone);
-
-  randomService = inject(RandomService);
 
   init() {
     this.cells().reset();
@@ -91,7 +95,6 @@ export class GameTestComponent implements AfterViewInit {
   initCanvasTransform() {
     this.ctx.resetTransform();
     this.ctx.scale(this.wantedZoom(), this.wantedZoom());
-    this.ctx.translate(-this.boundsOffset * 0.5, -this.boundsOffset * 0.5);
   }
 
   ngAfterViewInit(): void {
@@ -121,6 +124,7 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   draw() {
+    this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.cells().draw(this.ctx);
   }
 }
