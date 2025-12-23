@@ -15,13 +15,10 @@ export class CellsComponent {
   private rows: number;
   private columns: number;
 
-  private screenOffset: number;
-
   private randomService: RandomService;
 
   constructor(private width: number, private height: number) {
     this.randomService = inject(RandomService);
-    this.screenOffset = 0;
     this.rows = this.height;
     this.columns = this.width;
     this.offsets = [
@@ -35,10 +32,9 @@ export class CellsComponent {
       { row: 1, column: 1 },
     ];
 
-    this.offCanvas = new OffscreenCanvas(this.columns, this.rows);
+    this.offCanvas = new OffscreenCanvas(this.width, this.height);
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
-
     this.currentState = new Grid<boolean>(this.rows, this.columns, false);
     this.nextState = new Grid<boolean>(this.rows, this.columns, false);
 
@@ -46,7 +42,7 @@ export class CellsComponent {
       this.currentState.setAtIndex(i, this.randomService.rnd() * 100 > 93);
     }
 
-    this.imageBuffer = this.offCtx.createImageData(this.columns, this.rows);
+    this.imageBuffer = this.offCtx.createImageData(this.width, this.height);
     for (let i = 0; i < this.currentState.length; i++) {
       const idx = i * 4;
       this.imageBuffer.data[idx] = 255;
@@ -94,8 +90,14 @@ export class CellsComponent {
     }
 
     this.offCtx.fillRect(0, 0, this.width, this.height);
-    this.offCtx.putImageData(this.imageBuffer, -this.screenOffset * 0.5, -this.screenOffset * 0.5);
+    this.offCtx.putImageData(this.imageBuffer, 0, 0);
 
-    ctx.drawImage(this.offCanvas, 0, 0, this.imageBuffer.width, this.imageBuffer.height);
+    ctx.drawImage(
+      this.offCanvas,
+      -this.width * 0.5,
+      -this.height * 0.5,
+      this.imageBuffer.width,
+      this.imageBuffer.height
+    );
   }
 }

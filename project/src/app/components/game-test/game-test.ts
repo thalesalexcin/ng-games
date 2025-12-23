@@ -7,13 +7,14 @@ import {
   NgZone,
   runInInjectionContext,
   signal,
-  viewChild,
   ViewChild,
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { CellsComponent } from '../cells/cells';
 import { RandomService } from '../../services/random-service';
+import { Point } from '../../models/point';
+import { CameraComponent } from '../../classes/camera';
 
 @Component({
   selector: 'app-game-test',
@@ -27,6 +28,7 @@ export class GameTestComponent implements AfterViewInit {
 
   //TODO viewChildren with a base component. Or have here a list of "objects" with their own logic and components
   private cells!: CellsComponent;
+  private camera!: CameraComponent;
 
   canvasWidth = 800;
   canvasHeight = 600;
@@ -40,24 +42,18 @@ export class GameTestComponent implements AfterViewInit {
   isPaused = signal<boolean>(false);
   randomService = inject(RandomService);
 
-  //TODO camera related, move to its own component
-  wantedZoom = signal<number>(1);
-
-  FRAME_DURATION = 1 / 15; // ms per frame
+  FRAME_DURATION = 1 / 15; //TODO make it 60 fps and on it's own component ms per frame
   lastFrameTime = 0;
 
   zone = inject(NgZone);
   injector = inject(Injector);
 
   init() {
+    //TODO this is being called every restart. it shouldn't recreate a new component. instead we should reset it
     runInInjectionContext(this.injector, () => {
       this.cells = new CellsComponent(this.canvasWidth, this.canvasHeight);
+      this.camera = new CameraComponent();
     });
-  }
-
-  onZoomChange() {
-    this.initCanvasTransform();
-    this.draw();
   }
 
   onRestartClick() {
@@ -99,7 +95,6 @@ export class GameTestComponent implements AfterViewInit {
 
   initCanvasTransform() {
     this.ctx.resetTransform();
-    this.ctx.scale(this.wantedZoom(), this.wantedZoom());
   }
 
   ngAfterViewInit(): void {
@@ -118,8 +113,8 @@ export class GameTestComponent implements AfterViewInit {
       this.lastFrameTime = time;
       if (!this.isPaused()) {
         this.update(deltaTime);
-        this.draw();
       }
+      this.draw();
     }
     requestAnimationFrame((t) => this.gameLoop(t));
   }
@@ -129,7 +124,40 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   draw() {
-    this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    this.camera.apply(this.ctx);
     this.cells.draw(this.ctx);
+  }
+
+  isMouseButtonDown: boolean = false;
+  lastPos: Point = { x: 0, y: 0 };
+  currentScreenPos: Point = { x: 0, y: 0 };
+  onCanvasMouseDown(event: MouseEvent) {
+    this.isMouseButtonDown = true;
+    this.lastPos = { x: event.offsetX, y: event.offsetY };
+  }
+  onCanvasMouseUp(event: MouseEvent) {
+    this.isMouseButtonDown = false;
+  }
+  onCanvasMouseWheel(event: WheelEvent) {
+    this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1, this.ctx);
+  }
+
+  onCanvasMouseMove(event: MouseEvent) {
+    this.currentScreenPos = { x: event.offsetX, y: event.offsetY };
+    if (this.isMouseButtonDown) {
+      let lastWorldPos = this.camera.screenToWorld(this.lastPos, this.ctx);
+      let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos, this.ctx);
+      let worldDiff: Point = {
+        x: currentWorldPos.x - lastWorldPos.x,
+        y: currentWorldPos.y - lastWorldPos.y,
+      };
+
+      this.camera.move(worldDiff);
+      this.lastPos = { ...this.currentScreenPos };
+    }
+  }
+
+  onMouseLeave(event: MouseEvent) {
+    this.isMouseButtonDown = false;
   }
 }
