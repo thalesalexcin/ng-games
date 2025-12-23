@@ -35,6 +35,11 @@ export class CellsComponent {
     this.offCanvas = new OffscreenCanvas(this.width, this.height);
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
+
+    this.reset();
+  }
+
+  reset() {
     this.currentState = new Grid<boolean>(this.rows, this.columns, false);
     this.nextState = new Grid<boolean>(this.rows, this.columns, false);
 

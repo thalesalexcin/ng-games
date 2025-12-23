@@ -32,8 +32,6 @@ export class GameTestComponent implements AfterViewInit {
 
   canvasWidth = 800;
   canvasHeight = 600;
-  //TODO cells related, move it to CellsComponent
-  boundsOffset = 0;
 
   //TODO game state related, move to its own component / store
   currentSeed = signal<string>('');
@@ -57,13 +55,13 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   onRestartClick() {
-    this.randomService.reset();
-    this.init();
+    this.randomService.setSeed(this.currentSeed());
+    this.cells.reset();
     this.draw();
   }
   onGenerateNewClick() {
     this.generateNewSeed();
-    this.init();
+    this.cells.reset();
     this.draw();
   }
 
@@ -90,11 +88,6 @@ export class GameTestComponent implements AfterViewInit {
     }
 
     this.ctx.imageSmoothingEnabled = false;
-    this.initCanvasTransform();
-  }
-
-  initCanvasTransform() {
-    this.ctx.resetTransform();
   }
 
   ngAfterViewInit(): void {
@@ -132,11 +125,15 @@ export class GameTestComponent implements AfterViewInit {
   lastPos: Point = { x: 0, y: 0 };
   currentScreenPos: Point = { x: 0, y: 0 };
   onCanvasMouseDown(event: MouseEvent) {
-    this.isMouseButtonDown = true;
-    this.lastPos = { x: event.offsetX, y: event.offsetY };
+    if (event.button == 0) {
+      this.isMouseButtonDown = true;
+      this.lastPos = { x: event.offsetX, y: event.offsetY };
+    }
   }
   onCanvasMouseUp(event: MouseEvent) {
-    this.isMouseButtonDown = false;
+    if (event.button == 0) {
+      this.isMouseButtonDown = false;
+    }
   }
   onCanvasMouseWheel(event: WheelEvent) {
     this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1, this.ctx);
