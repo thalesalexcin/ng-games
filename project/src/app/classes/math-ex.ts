@@ -7,4 +7,14 @@ export class MathEx {
   static mod(n: number, m: number): number {
     return ((n % m) + m) % m;
   }
+
+  /**
+   * @param v the value to be clamped
+   * @param min the minimum value
+   * @param max the maximum value
+   * @returns Clamped value between min and max
+   */
+  static clamp(v: number, min: number, max: number): number {
+    return Math.min(Math.max(v, min), max);
+  }
 }
