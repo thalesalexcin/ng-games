@@ -1,4 +1,5 @@
 import { Point } from '../models/point';
+import { MathEx } from './math-ex';
 
 export class CameraComponent {
   private position: Point = { x: 0, y: 0 };
@@ -28,9 +29,17 @@ export class CameraComponent {
     };
   }
 
-  move(worldDelta: Point) {
-    this.position.x -= worldDelta.x;
-    this.position.y -= worldDelta.y;
+  move(worldDelta: Point, ctx: CanvasRenderingContext2D) {
+    this.position.x += worldDelta.x * -1;
+    this.position.y += worldDelta.y * -1;
+
+    let minX = -(ctx.canvas.width - ctx.canvas.width / this.zoom) / 2;
+    let maxX = (ctx.canvas.width - ctx.canvas.width / this.zoom) / 2;
+    this.position.x = MathEx.clamp(this.position.x, minX, maxX);
+
+    let minY = -(ctx.canvas.height - ctx.canvas.height / this.zoom) / 2;
+    let maxY = (ctx.canvas.height - ctx.canvas.height / this.zoom) / 2;
+    this.position.y = MathEx.clamp(this.position.y, minY, maxY);
   }
 
   zoomAt(screnPoint: Point, zoomDelta: number, ctx: CanvasRenderingContext2D) {
@@ -40,7 +49,11 @@ export class CameraComponent {
     this.zoom = Math.max(this.zoom, 1);
 
     let newWorld = this.screenToWorld(screnPoint, ctx);
-    this.position.x += world.x - newWorld.x;
-    this.position.y += world.y - newWorld.y;
+    let worldDiff = {
+      x: newWorld.x - world.x,
+      y: newWorld.y - world.y,
+    };
+
+    this.move(worldDiff, ctx);
   }
 }

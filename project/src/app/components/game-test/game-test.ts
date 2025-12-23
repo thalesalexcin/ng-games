@@ -152,9 +152,9 @@ export class GameTestComponent implements AfterViewInit {
         y: currentWorldPos.y - lastWorldPos.y,
       };
 
-      this.camera.move(worldDiff);
-      this.lastPos = { ...this.currentScreenPos };
+      this.camera.move(worldDiff, this.ctx);
     }
+    this.lastPos = { ...this.currentScreenPos };
   }
 
   onMouseLeave(event: MouseEvent) {
