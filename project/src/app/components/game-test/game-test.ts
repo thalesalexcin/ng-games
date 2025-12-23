@@ -47,10 +47,10 @@ export class GameTestComponent implements AfterViewInit {
   injector = inject(Injector);
 
   init() {
-    //TODO this is being called every restart. it shouldn't recreate a new component. instead we should reset it
     runInInjectionContext(this.injector, () => {
       this.cells = new CellsComponent(this.canvasWidth, this.canvasHeight);
-      this.camera = new CameraComponent();
+      //TODO where should camera limits be defined? based on world? (cells bounds)
+      this.camera = new CameraComponent(this.canvasWidth, this.canvasHeight);
     });
   }
 
@@ -137,20 +137,22 @@ export class GameTestComponent implements AfterViewInit {
   }
   onCanvasMouseWheel(event: WheelEvent) {
     event.preventDefault();
-    this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1, this.ctx);
+    this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1);
+    this.camera.constraint(this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
   onCanvasMouseMove(event: MouseEvent) {
     this.currentScreenPos = { x: event.offsetX, y: event.offsetY };
     if (this.isMouseButtonDown) {
-      let lastWorldPos = this.camera.screenToWorld(this.lastPos, this.ctx);
-      let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos, this.ctx);
+      let lastWorldPos = this.camera.screenToWorld(this.lastPos);
+      let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos);
       let worldDiff: Point = {
         x: currentWorldPos.x - lastWorldPos.x,
         y: currentWorldPos.y - lastWorldPos.y,
       };
 
-      this.camera.move(worldDiff, this.ctx);
+      this.camera.move(worldDiff);
+      this.camera.constraint(this.ctx.canvas.width, this.ctx.canvas.height);
     }
     this.lastPos = { ...this.currentScreenPos };
   }
