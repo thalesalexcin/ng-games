@@ -136,6 +136,7 @@ export class GameTestComponent implements AfterViewInit {
     }
   }
   onCanvasMouseWheel(event: WheelEvent) {
+    event.preventDefault();
     this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1, this.ctx);
   }
 
