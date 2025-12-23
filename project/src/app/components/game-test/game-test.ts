@@ -114,8 +114,8 @@ export class GameTestComponent implements AfterViewInit {
       if (!this.isPaused()) {
         this.update(deltaTime);
       }
-      this.draw();
     }
+    this.draw();
     requestAnimationFrame((t) => this.gameLoop(t));
   }
 
