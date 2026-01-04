@@ -11,14 +11,15 @@ import {
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { CellsComponent } from '../cells/cells';
 import { RandomService } from '../../services/random-service';
 import { Point } from '../../models/point';
-import { CameraComponent } from '../../classes/camera';
+import { Camera } from '../../classes/camera';
+import { GameOfLife } from '../../classes/game-of-life';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-game-test',
-  imports: [FormsModule],
+  imports: [FormsModule, NgClass],
   templateUrl: './game-test.html',
   styleUrl: './game-test.css',
 })
@@ -27,8 +28,8 @@ export class GameTestComponent implements AfterViewInit {
   private ctx!: CanvasRenderingContext2D;
 
   //TODO viewChildren with a base component. Or have here a list of "objects" with their own logic and components
-  private cells!: CellsComponent;
-  private camera!: CameraComponent;
+  private gameOfLife!: GameOfLife;
+  private camera!: Camera;
 
   canvasWidth = 800;
   canvasHeight = 600;
@@ -48,20 +49,20 @@ export class GameTestComponent implements AfterViewInit {
 
   init() {
     runInInjectionContext(this.injector, () => {
-      this.cells = new CellsComponent(this.canvasWidth, this.canvasHeight);
+      this.gameOfLife = new GameOfLife(this.canvasWidth, this.canvasHeight);
       //TODO where should camera limits be defined? based on world? (cells bounds)
-      this.camera = new CameraComponent(this.canvasWidth, this.canvasHeight);
+      this.camera = new Camera(this.canvasWidth, this.canvasHeight);
     });
   }
 
   onRestartClick() {
     this.randomService.setSeed(this.currentSeed());
-    this.cells.reset();
+    this.gameOfLife.reset();
     this.draw();
   }
   onGenerateNewClick() {
     this.generateNewSeed();
-    this.cells.reset();
+    this.gameOfLife.reset();
     this.draw();
   }
 
@@ -113,12 +114,12 @@ export class GameTestComponent implements AfterViewInit {
   }
 
   update(deltaTime: number) {
-    this.cells.update(deltaTime);
+    this.gameOfLife.update(deltaTime);
   }
 
   draw() {
     this.camera.apply(this.ctx);
-    this.cells.draw(this.ctx);
+    this.gameOfLife.draw(this.ctx);
   }
 
   isMouseButtonDown: boolean = false;

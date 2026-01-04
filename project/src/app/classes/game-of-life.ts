@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
-import { Grid, GridCoords } from '../../classes/grid';
-import { RandomService } from '../../services/random-service';
-import { MathEx } from '../../classes/math-ex';
+import { Grid, GridCoords } from './grid';
+import { RandomService } from '../services/random-service';
+import { MathEx } from './math-ex';
 
-export class CellsComponent {
+export class GameOfLife {
   private currentState!: Grid<boolean>;
   private nextState!: Grid<boolean>;
   private offsets: GridCoords[];

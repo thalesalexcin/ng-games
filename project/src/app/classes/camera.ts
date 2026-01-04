@@ -1,7 +1,7 @@
 import { Point } from '../models/point';
 import { MathEx } from './math-ex';
 
-export class CameraComponent {
+export class Camera {
   private position: Point = { x: 0, y: 0 };
   private zoom = 1;
 

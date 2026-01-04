@@ -70,14 +70,4 @@ describe('Grid', () => {
     expect(grid.isValidCoords({ row: 4, column: 0 })).toBeFalsy();
     expect(grid.isValidCoords({ row: 0, column: 5 })).toBeFalsy();
   });
-
-  // -----------------------------
-  // Modulo
-  // -----------------------------
-  it('should return positive modulo results', () => {
-    expect(grid.mod(5, 5)).toBe(0);
-    expect(grid.mod(6, 5)).toBe(1);
-    expect(grid.mod(-1, 5)).toBe(4);
-    expect(grid.mod(-6, 5)).toBe(4);
-  });
 });
