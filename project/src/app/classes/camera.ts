@@ -1,6 +1,11 @@
 import { Point } from '../models/point';
 import { MathEx } from './math-ex';
 
+export interface CameraConstraints {
+  width: number;
+  height: number;
+}
+
 export class Camera {
   private position: Point = { x: 0, y: 0 };
   private zoom = 1;
@@ -36,11 +41,11 @@ export class Camera {
     this.position.y += worldDelta.y * -1;
   }
 
-  constraint(width: number, height: number) {
-    let widthLimits = (this.viewportWidth - width / this.zoom) / 2;
+  constraint(constraints: CameraConstraints) {
+    let widthLimits = (this.viewportWidth - constraints.width / this.zoom) / 2;
     this.position.x = MathEx.clamp(this.position.x, -widthLimits, widthLimits);
 
-    let heightLimits = (this.viewportHeight - height / this.zoom) / 2;
+    let heightLimits = (this.viewportHeight - constraints.height / this.zoom) / 2;
     this.position.y = MathEx.clamp(this.position.y, -heightLimits, heightLimits);
   }
 

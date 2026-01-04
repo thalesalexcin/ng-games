@@ -45,17 +45,7 @@
       </ul>
     </div>
     <div>
-      <canvas
-        class="border shadow"
-        #gameCanvas
-        [width]="canvasWidth"
-        [height]="canvasHeight"
-        (mousedown)="onCanvasMouseDown($event)"
-        (mouseup)="onCanvasMouseUp($event)"
-        (mousemove)="onCanvasMouseMove($event)"
-        (wheel)="onCanvasMouseWheel($event)"
-        (mouseleave)="onMouseLeave($event)"
-      ></canvas>
+      <app-canvas></app-canvas>
     </div>
   </div>
 </div>

@@ -1,0 +1,11 @@
+<canvas
+  class="border shadow"
+  #gameCanvas
+  [width]="canvasWidth"
+  [height]="canvasHeight"
+  (mousedown)="onCanvasMouseDown($event)"
+  (mouseup)="onCanvasMouseUp($event)"
+  (mousemove)="onCanvasMouseMove($event)"
+  (wheel)="onCanvasMouseWheel($event)"
+  (mouseleave)="onCanvasMouseLeave($event)"
+></canvas>

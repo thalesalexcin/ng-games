@@ -1,38 +1,36 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   inject,
   Injector,
   NgZone,
   runInInjectionContext,
   signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { RandomService } from '../../services/random-service';
-import { Point } from '../../models/point';
-import { Camera } from '../../classes/camera';
+import { Camera, CameraConstraints } from '../../classes/camera';
 import { GameOfLife } from '../../classes/game-of-life';
 import { NgClass } from '@angular/common';
+import { CanvasComponent } from '../canvas/canvas';
+import { CameraController } from '../../classes/camera-controller';
 
 @Component({
   selector: 'app-game-test',
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, CanvasComponent],
   templateUrl: './game-test.html',
   styleUrl: './game-test.css',
 })
 export class GameTestComponent implements AfterViewInit {
-  @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
-  private ctx!: CanvasRenderingContext2D;
-
   //TODO viewChildren with a base component. Or have here a list of "objects" with their own logic and components
-  private gameOfLife!: GameOfLife;
+  private gameOfLife!: GameOfLife; //TODO transform this in a entity with its components
   private camera!: Camera;
+  private canvasComponent = viewChild.required(CanvasComponent);
 
-  canvasWidth = 800;
-  canvasHeight = 600;
+  private gridWidth = 800;
+  private gridHeight = 600;
 
   //TODO game state related, move to its own component / store
   currentSeed = signal<string>('');
@@ -47,12 +45,16 @@ export class GameTestComponent implements AfterViewInit {
   zone = inject(NgZone);
   injector = inject(Injector);
 
-  init() {
-    runInInjectionContext(this.injector, () => {
-      this.gameOfLife = new GameOfLife(this.canvasWidth, this.canvasHeight);
-      //TODO where should camera limits be defined? based on world? (cells bounds)
-      this.camera = new Camera(this.canvasWidth, this.canvasHeight);
-    });
+  initGameComponents() {
+    this.gameOfLife = new GameOfLife(this.gridWidth, this.gridHeight);
+    //TODO where should camera limits be defined? based on world? (cells bounds)
+    this.camera = new Camera(this.gridWidth, this.gridHeight);
+    let cameraConstraints: CameraConstraints = {
+      width: this.ctx.canvas.width,
+      height: this.ctx.canvas.height,
+    };
+
+    this.canvasComponent().setController(new CameraController(this.camera, cameraConstraints));
   }
 
   onRestartClick() {
@@ -82,20 +84,15 @@ export class GameTestComponent implements AfterViewInit {
     this.draw();
   }
 
-  initCanvas() {
-    this.ctx = this.canvas.nativeElement.getContext('2d')!;
-    if (!this.ctx) {
-      return;
-    }
-
-    this.ctx.imageSmoothingEnabled = false;
+  get ctx(): CanvasRenderingContext2D {
+    return this.canvasComponent().ctx;
   }
 
   ngAfterViewInit(): void {
-    this.initCanvas();
     this.generateNewSeed();
-    this.init();
-    this.draw();
+    runInInjectionContext(this.injector, () => {
+      this.initGameComponents();
+    });
     this.zone.runOutsideAngular(() => {
       requestAnimationFrame((t) => this.gameLoop(t));
     });
@@ -120,45 +117,5 @@ export class GameTestComponent implements AfterViewInit {
   draw() {
     this.camera.apply(this.ctx);
     this.gameOfLife.draw(this.ctx);
-  }
-
-  isMouseButtonDown: boolean = false;
-  lastPos: Point = { x: 0, y: 0 };
-  currentScreenPos: Point = { x: 0, y: 0 };
-  onCanvasMouseDown(event: MouseEvent) {
-    if (event.button == 0) {
-      this.isMouseButtonDown = true;
-      this.lastPos = { x: event.offsetX, y: event.offsetY };
-    }
-  }
-  onCanvasMouseUp(event: MouseEvent) {
-    if (event.button == 0) {
-      this.isMouseButtonDown = false;
-    }
-  }
-  onCanvasMouseWheel(event: WheelEvent) {
-    event.preventDefault();
-    this.camera.zoomAt(this.currentScreenPos, event.deltaY > 0 ? -1 : 1);
-    this.camera.constraint(this.ctx.canvas.width, this.ctx.canvas.height);
-  }
-
-  onCanvasMouseMove(event: MouseEvent) {
-    this.currentScreenPos = { x: event.offsetX, y: event.offsetY };
-    if (this.isMouseButtonDown) {
-      let lastWorldPos = this.camera.screenToWorld(this.lastPos);
-      let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos);
-      let worldDiff: Point = {
-        x: currentWorldPos.x - lastWorldPos.x,
-        y: currentWorldPos.y - lastWorldPos.y,
-      };
-
-      this.camera.move(worldDiff);
-      this.camera.constraint(this.ctx.canvas.width, this.ctx.canvas.height);
-    }
-    this.lastPos = { ...this.currentScreenPos };
-  }
-
-  onMouseLeave(event: MouseEvent) {
-    this.isMouseButtonDown = false;
   }
 }
