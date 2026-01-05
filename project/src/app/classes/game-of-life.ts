@@ -37,6 +37,7 @@ export class GameOfLife {
     this.offCtx.imageSmoothingEnabled = false;
 
     this.reset();
+    this.fillRandom();
   }
 
   reset() {
