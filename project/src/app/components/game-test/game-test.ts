@@ -60,11 +60,13 @@ export class GameTestComponent implements AfterViewInit {
   onRestartClick() {
     this.randomService.setSeed(this.currentSeed());
     this.gameOfLife.reset();
+    this.gameOfLife.fillRandom();
     this.draw();
   }
   onGenerateNewClick() {
     this.generateNewSeed();
     this.gameOfLife.reset();
+    this.gameOfLife.fillRandom();
     this.draw();
   }
 
@@ -81,6 +83,12 @@ export class GameTestComponent implements AfterViewInit {
   onNextGenerationClick() {
     this.isPaused.set(true);
     this.update(0);
+    this.draw();
+  }
+
+  onClearClick() {
+    this.isPaused.set(true);
+    this.gameOfLife.reset();
     this.draw();
   }
 

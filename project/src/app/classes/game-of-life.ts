@@ -43,15 +43,17 @@ export class GameOfLife {
     this.currentState = new Grid<boolean>(this.rows, this.columns, false);
     this.nextState = new Grid<boolean>(this.rows, this.columns, false);
 
-    for (let i = 0; i < this.currentState.length; i++) {
-      this.currentState.setAtIndex(i, this.randomService.rnd() * 100 > 93);
-    }
-
     this.imageBuffer = this.offCtx.createImageData(this.width, this.height);
     for (let i = 0; i < this.currentState.length; i++) {
       const idx = i * 4;
       this.imageBuffer.data[idx] = 255;
       this.imageBuffer.data[idx + 1] = 255;
+    }
+  }
+
+  fillRandom() {
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState.setAtIndex(i, this.randomService.rnd() * 100 > 93);
     }
   }
 
