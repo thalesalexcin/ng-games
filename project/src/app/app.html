@@ -1,6 +1,8 @@
 <div class="bg-dark d-flex flex-column min-vh-100">
+  <app-header></app-header>
   <main class="flex-fill d-flex justify-content-center p-4">
+    <router-outlet></router-outlet>
     <app-game-test></app-game-test>
   </main>
-  <router-outlet></router-outlet>
+  <app-footer></app-footer>
 </div>
