@@ -9,5 +9,6 @@ describe('MathEx', () => {
     expect(MathEx.mod(6, 5)).toBe(1);
     expect(MathEx.mod(-1, 5)).toBe(4);
     expect(MathEx.mod(-6, 5)).toBe(4);
+    expect(MathEx.mod(-6, 0)).toBe(NaN);
   });
 });
