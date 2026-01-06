@@ -5,7 +5,7 @@ export class MathEx {
    * @returns A positive number between 0 and m
    */
   static mod(n: number, m: number): number {
-    return ((n % m) + m) % m;
+    return n - m * Math.floor(n / m);
   }
 
   /**
