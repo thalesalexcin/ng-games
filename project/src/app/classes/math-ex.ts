@@ -1,3 +1,5 @@
+import { GridCoords } from '../models/grid-coords';
+
 export class MathEx {
   /**
    * @param n Current number to apply the modulo
@@ -16,5 +18,18 @@ export class MathEx {
    */
   static clamp(v: number, min: number, max: number): number {
     return Math.min(Math.max(v, min), max);
+  }
+
+  static indexToCoords(i: number, gridWidth: number): GridCoords {
+    let coords: GridCoords = {
+      row: Math.floor(i / gridWidth),
+      column: MathEx.mod(i, gridWidth),
+    };
+
+    return coords;
+  }
+
+  static coordsToIndex(coords: GridCoords, gridWidth: number): number {
+    return coords.row * gridWidth + coords.column;
   }
 }
