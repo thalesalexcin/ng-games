@@ -65,6 +65,13 @@ export class GameTestComponent implements AfterViewInit {
     controller.onWorldClick = (worldPos: Point) => {
       this.gameOfLife.toggleAlive(worldPos);
     };
+
+    controller.onWorldHoverEnter = (worldPos: Point) => {
+      this.gameOfLife.setHoverWorldPosition(worldPos);
+    };
+    controller.onWorldHoverLeave = () => {
+      this.gameOfLife.setHoverWorldPosition(undefined);
+    };
     this.canvasComponent().setController(controller);
   }
 

@@ -18,6 +18,11 @@ export class GameOfLife {
   private columns: number;
 
   private randomService: RandomService;
+  private hoverPosition?: GridCoords;
+
+  setHoverWorldPosition(worldPosition?: Point) {
+    this.hoverPosition = worldPosition ? this.worldToGridPos(worldPosition) : undefined;
+  }
 
   constructor(private width: number, private height: number, private worldOffset: Point) {
     this.randomService = inject(RandomService);
@@ -113,9 +118,27 @@ export class GameOfLife {
       const alive = this.currentState.getByIndex(i);
       const idx = i * 4;
 
-      if (alive) {
+      let isHovered = false;
+      if (this.hoverPosition) {
+        let hoveredIndex = this.currentState.coordsToIndex(this.hoverPosition);
+        isHovered = hoveredIndex == i;
+      }
+
+      //TODO add util to convert RGB to imageBuffer data
+      if (isHovered) {
+        this.imageBuffer.data[idx] = 255;
+        this.imageBuffer.data[idx + 1] = 255;
+        this.imageBuffer.data[idx + 2] = 255;
+        this.imageBuffer.data[idx + 3] = 255;
+      } else if (alive) {
+        this.imageBuffer.data[idx] = 255;
+        this.imageBuffer.data[idx + 1] = 255;
+        this.imageBuffer.data[idx + 2] = 0;
         this.imageBuffer.data[idx + 3] = 255;
       } else {
+        this.imageBuffer.data[idx] = 0;
+        this.imageBuffer.data[idx + 1] = 0;
+        this.imageBuffer.data[idx + 2] = 0;
         this.imageBuffer.data[idx + 3] = 0;
       }
     }

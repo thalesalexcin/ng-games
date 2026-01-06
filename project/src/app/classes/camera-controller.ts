@@ -8,6 +8,8 @@ export class CameraController extends InputController {
   private currentScreenPos: Point = { x: 0, y: 0 };
 
   onWorldClick?: (worldPosition: Point) => void;
+  onWorldHoverEnter?: (worldPosition: Point) => void;
+  onWorldHoverLeave?: () => void;
 
   constructor(private camera: Camera, private constraints: CameraConstraints) {
     super();
@@ -45,9 +47,12 @@ export class CameraController extends InputController {
 
   override onMouseMove(event: MouseEvent): void {
     this.currentScreenPos = { x: event.offsetX, y: event.offsetY };
+    let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos);
+    if (this.onWorldHoverEnter) {
+      this.onWorldHoverEnter(currentWorldPos);
+    }
     if (this.isMouseButtonDown) {
       let lastWorldPos = this.camera.screenToWorld(this.lastPos);
-      let currentWorldPos = this.camera.screenToWorld(this.currentScreenPos);
       let worldDiff: Point = {
         x: currentWorldPos.x - lastWorldPos.x,
         y: currentWorldPos.y - lastWorldPos.y,
@@ -61,5 +66,8 @@ export class CameraController extends InputController {
 
   override onMouseLeave(event: MouseEvent): void {
     this.isMouseButtonDown = false;
+    if (this.onWorldHoverLeave) {
+      this.onWorldHoverLeave();
+    }
   }
 }
