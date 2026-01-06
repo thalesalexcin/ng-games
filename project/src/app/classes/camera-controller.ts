@@ -7,6 +7,8 @@ export class CameraController extends InputController {
   private lastPos: Point = { x: 0, y: 0 };
   private currentScreenPos: Point = { x: 0, y: 0 };
 
+  onWorldClick?: (worldPosition: Point) => void;
+
   constructor(private camera: Camera, private constraints: CameraConstraints) {
     super();
   }
@@ -15,14 +17,23 @@ export class CameraController extends InputController {
   override onControllerExit(): void {}
 
   override onMouseDown(event: MouseEvent): void {
-    if (event.button == 0) {
+    if (event.button == 1) {
       this.isMouseButtonDown = true;
       this.lastPos = { x: event.offsetX, y: event.offsetY };
+    }
+
+    //TODO what about onMouseUp ?
+    if (event.button == 0) {
+      let screenPos = { x: event.offsetX, y: event.offsetY };
+      let currentWorldPos = this.camera.screenToWorld(screenPos);
+      if (this.onWorldClick) {
+        this.onWorldClick(currentWorldPos);
+      }
     }
   }
 
   override onMouseUp(event: MouseEvent): void {
-    if (event.button == 0) {
+    if (event.button == 1) {
       this.isMouseButtonDown = false;
     }
   }

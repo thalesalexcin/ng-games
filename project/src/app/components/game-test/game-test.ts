@@ -16,6 +16,7 @@ import { GameOfLife } from '../../classes/game-of-life';
 import { NgClass } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas';
 import { CameraController } from '../../classes/camera-controller';
+import { Point } from '../../models/point';
 
 @Component({
   selector: 'app-game-test',
@@ -46,15 +47,25 @@ export class GameTestComponent implements AfterViewInit {
   injector = inject(Injector);
 
   initGameComponents() {
-    this.gameOfLife = new GameOfLife(this.gridWidth, this.gridHeight);
+    let canvasWidth = this.ctx.canvas.width;
+    let canvasHeight = this.ctx.canvas.height;
+    let worldOffset: Point = {
+      x: -canvasWidth * 0.5,
+      y: -canvasHeight * 0.5,
+    };
+    this.gameOfLife = new GameOfLife(this.gridWidth, this.gridHeight, worldOffset);
     //TODO where should camera limits be defined? based on world? (cells bounds)
     this.camera = new Camera(this.gridWidth, this.gridHeight);
     let cameraConstraints: CameraConstraints = {
-      width: this.ctx.canvas.width,
-      height: this.ctx.canvas.height,
+      width: canvasWidth,
+      height: canvasHeight,
     };
 
-    this.canvasComponent().setController(new CameraController(this.camera, cameraConstraints));
+    let controller = new CameraController(this.camera, cameraConstraints);
+    controller.onWorldClick = (worldPos: Point) => {
+      this.gameOfLife.toggleAlive(worldPos);
+    };
+    this.canvasComponent().setController(controller);
   }
 
   onRestartClick() {
@@ -73,6 +84,8 @@ export class GameTestComponent implements AfterViewInit {
   generateNewSeed() {
     this.lastSeed.set(this.currentSeed());
     this.currentSeed.set(Math.floor(Math.random() * 3541684621335).toString());
+    //this.currentSeed.set('3086406898735');
+    //let test = { row: 0, column: 0.1 };
     this.randomService.setSeed(this.currentSeed());
   }
 

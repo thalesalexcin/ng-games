@@ -1,7 +1,9 @@
 import { inject } from '@angular/core';
-import { Grid, GridCoords } from './grid';
+import { Grid } from './grid';
 import { RandomService } from '../services/random-service';
 import { MathEx } from './math-ex';
+import { Point } from '../models/point';
+import { GridCoords } from '../models/grid-coords';
 
 export class GameOfLife {
   private currentState!: Grid<boolean>;
@@ -17,7 +19,7 @@ export class GameOfLife {
 
   private randomService: RandomService;
 
-  constructor(private width: number, private height: number) {
+  constructor(private width: number, private height: number, private worldOffset: Point) {
     this.randomService = inject(RandomService);
     this.rows = this.height;
     this.columns = this.width;
@@ -50,6 +52,27 @@ export class GameOfLife {
       this.imageBuffer.data[idx] = 255;
       this.imageBuffer.data[idx + 1] = 255;
     }
+  }
+
+  toggleAlive(worldPos: Point): void {
+    let gridCoords = this.worldToGridPos(worldPos);
+
+    if (this.currentState.isValidCoords(gridCoords)) {
+      let isAlive = this.currentState.get(gridCoords);
+      this.currentState.set(gridCoords, !isAlive);
+    }
+  }
+
+  worldToGridPos(worldPos: Point): GridCoords {
+    return {
+      row: Math.floor(worldPos.y - this.worldOffset.y),
+      column: Math.floor(worldPos.x - this.worldOffset.x),
+    };
+    // code below will triger FPS drop with something related with GridCoords receiving floating numbers
+    // return {
+    //   row: Math.floor(worldPos.y) - this.worldOffset.y,
+    //   column: Math.floor(worldPos.x) - this.worldOffset.x,
+    // };
   }
 
   fillRandom() {
@@ -102,8 +125,8 @@ export class GameOfLife {
 
     ctx.drawImage(
       this.offCanvas,
-      -this.width * 0.5,
-      -this.height * 0.5,
+      this.worldOffset.x,
+      this.worldOffset.y,
       this.imageBuffer.width,
       this.imageBuffer.height
     );

@@ -1,9 +1,5 @@
+import { GridCoords } from '../models/grid-coords';
 import { MathEx } from './math-ex';
-
-export interface GridCoords {
-  row: number;
-  column: number;
-}
 
 export class Grid<T> {
   private data: T[];
