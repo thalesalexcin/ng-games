@@ -9,20 +9,21 @@ export class AntsPath {
   private offCtx!: OffscreenCanvasRenderingContext2D;
   private imageBuffer!: ImageData;
 
-  private randomService: RandomService;
+  private randomService: RandomService = inject(RandomService);
 
-  private currentPosition: GridCoords[] = [];
+  private ants: GridCoords[] = [];
+
+  //TODO temporary WILL BE WIPED OUT SOON I PROMISE
+  private currentFrame: number = 0;
 
   constructor(private width: number, private height: number, private worldOffset: Point) {
-    this.randomService = inject(RandomService);
-
     this.offCanvas = new OffscreenCanvas(this.width, this.height);
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
 
-    this.currentPosition.push({
-      column: 400,
-      row: 300,
+    this.ants.push({
+      column: -worldOffset.x,
+      row: -worldOffset.y,
     });
 
     this.reset();
@@ -32,23 +33,22 @@ export class AntsPath {
     this.imageBuffer = this.offCtx.createImageData(this.width, this.height);
   }
 
-  worldToGridPos(worldPos: Point): GridCoords {
+  addAnt(worldPos: Point): void {
+    let ant = this.worldToGridPos(worldPos);
+    this.ants.push(ant);
+  }
+
+  private worldToGridPos(worldPos: Point): GridCoords {
     return {
       row: Math.floor(worldPos.y - this.worldOffset.y),
       column: Math.floor(worldPos.x - this.worldOffset.x),
     };
   }
 
-  addAnt(worldPos: Point): void {
-    let ant = this.worldToGridPos(worldPos);
-    this.currentPosition.push(ant);
-  }
-
-  currentFrame: number = 0;
   update(deltaTime: number) {
     this.currentFrame++;
     for (let i = 0; i < 10; i++) {
-      for (let ant of this.currentPosition) {
+      for (let ant of this.ants) {
         let direction = Math.floor(this.randomService.rnd() * 4);
         switch (direction) {
           case 0:
@@ -80,7 +80,7 @@ export class AntsPath {
 
     for (let i = 0; i < this.imageBuffer.data.length / 4; i++) {
       const idx = i * 4;
-      this.imageBuffer.data[idx] -= 2;
+      this.imageBuffer.data[idx] -= 4;
       if (this.currentFrame % 2 == 0) {
         this.imageBuffer.data[idx + 1] -= 1;
       }
