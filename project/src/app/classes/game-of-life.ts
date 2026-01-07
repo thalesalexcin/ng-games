@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
-import { Grid } from './grid';
 import { RandomService } from '../services/random-service';
-import { MathEx } from './math-ex';
 import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
+import { Grid } from './utils/grid';
+import { MathEx } from './utils/math-ex';
 
 export class GameOfLife {
   private currentState!: Grid<boolean>;

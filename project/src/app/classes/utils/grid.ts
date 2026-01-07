@@ -1,4 +1,4 @@
-import { GridCoords } from '../models/grid-coords';
+import { GridCoords } from '../../models/grid-coords';
 import { MathEx } from './math-ex';
 
 export class Grid<T> {

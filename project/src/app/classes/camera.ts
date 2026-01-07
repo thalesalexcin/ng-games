@@ -1,5 +1,5 @@
 import { Point } from '../models/point';
-import { MathEx } from './math-ex';
+import { MathEx } from './utils/math-ex';
 
 export interface CameraConstraints {
   width: number;

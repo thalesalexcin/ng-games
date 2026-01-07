@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { GameComponent } from '../game/game';
-import { AntPathGameComponent } from '../ant-path-game/ant-path-game';
+import { GameComponent } from '../shared/game/game';
+import { AntsPathGameComponent } from '../ants-path-game/ants-path-game';
 
 @Component({
   selector: 'app-ants-path-page',
-  imports: [GameComponent, AntPathGameComponent],
+  imports: [GameComponent, AntsPathGameComponent],
   templateUrl: './ants-path-page.html',
   styleUrl: './ants-path-page.css',
 })

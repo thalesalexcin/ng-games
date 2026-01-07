@@ -10,9 +10,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas';
-import { Camera, CameraConstraints } from '../../classes/camera';
-import { CameraController } from '../../classes/camera-controller';
-import { ENTITY, Entity } from '../../classes/entity';
+import { Camera, CameraConstraints } from '../../../classes/camera';
+import { CameraController } from '../../../classes/camera-controller';
+import { ENTITY, Entity } from '../../../classes/entity';
 
 @Component({
   selector: 'app-game',

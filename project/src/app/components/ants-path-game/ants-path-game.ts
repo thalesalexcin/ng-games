@@ -5,13 +5,13 @@ import { ENTITY, Entity } from '../../classes/entity';
 import { CameraController } from '../../classes/camera-controller';
 
 @Component({
-  selector: 'app-ant-path-game',
-  templateUrl: './ant-path-game.html',
-  styleUrl: './ant-path-game.css',
+  selector: 'app-ants-path-game',
+  templateUrl: './ants-path-game.html',
+  styleUrl: './ants-path-game.css',
   imports: [],
-  providers: [{ provide: ENTITY, useExisting: AntPathGameComponent }],
+  providers: [{ provide: ENTITY, useExisting: AntsPathGameComponent }],
 })
-export class AntPathGameComponent extends Entity {
+export class AntsPathGameComponent extends Entity {
   private antPathLogic!: AntsPath;
 
   override init(): void {

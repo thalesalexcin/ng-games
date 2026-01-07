@@ -1,5 +1,5 @@
 import { Component, inject, signal, viewChild } from '@angular/core';
-import { GameComponent } from '../game/game';
+import { GameComponent } from '../shared/game/game';
 import { RandomService } from '../../services/random-service';
 import { GameOfLifeGame } from '../game-of-life-game/game-of-life-game';
 import { FormsModule } from '@angular/forms';

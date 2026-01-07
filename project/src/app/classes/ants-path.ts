@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { RandomService } from '../services/random-service';
-import { MathEx } from './math-ex';
 import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
+import { MathEx } from './utils/math-ex';
 
 export class AntsPath {
   private offCanvas!: OffscreenCanvas;

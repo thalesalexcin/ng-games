@@ -1,4 +1,4 @@
-import { GridCoords } from '../models/grid-coords';
+import { GridCoords } from '../../models/grid-coords';
 
 export class MathEx {
   /**

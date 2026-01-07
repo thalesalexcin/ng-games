@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { InputController } from '../../classes/input-controller';
-import { DefaultController } from '../../classes/default-controller';
+import { InputController } from '../../../classes/input-controller';
+import { DefaultController } from '../../../classes/default-controller';
 
 @Component({
   selector: 'app-canvas',
