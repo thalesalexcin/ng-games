@@ -64,9 +64,15 @@ export class AntsPath {
       let idx = MathEx.coordsToIndex(this.currentPosition, this.width) * 4;
       //TODO add util to convert RGB to imageBuffer data
       this.imageBuffer.data[idx] = 255;
-      this.imageBuffer.data[idx + 1] = 255;
-      this.imageBuffer.data[idx + 2] = 0;
+      this.imageBuffer.data[idx + 1] += 12;
+
       this.imageBuffer.data[idx + 3] = 255;
+    }
+
+    for (let i = 0; i < this.imageBuffer.data.length / 4; i++) {
+      const idx = i * 4;
+      this.imageBuffer.data[idx] -= 2;
+      this.imageBuffer.data[idx + 3]--;
     }
   }
 
