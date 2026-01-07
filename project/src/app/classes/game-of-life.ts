@@ -91,6 +91,7 @@ export class GameOfLife {
 
       for (let currentRow = 0; currentRow < this.height; currentRow++) {
         for (let currentColumn = 0; currentColumn < this.width; currentColumn++) {
+          //TODO optimised but if it goes out of the screen it wont teleport to the other side, not important for now
           const rowLeft = (currentRow - 1) * columns;
           const rowRight = (currentRow + 1) * columns;
           const rowCurrent = currentRow * columns;
