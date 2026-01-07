@@ -24,8 +24,6 @@ export class GameOfLife {
     } else {
       this.hoverIndex = undefined;
     }
-    const hoverGridPos = worldPosition ? this.worldToGridPos(worldPosition) : undefined;
-    if (hoverGridPos) this.hoverIndex = hoverGridPos.row * this.columns + hoverGridPos.column;
   }
 
   constructor(private width: number, private height: number, private worldOffset: Point) {
@@ -72,11 +70,6 @@ export class GameOfLife {
       row: Math.floor(worldPos.y - this.worldOffset.y),
       column: Math.floor(worldPos.x - this.worldOffset.x),
     };
-    // code below will triger FPS drop with something related with GridCoords receiving floating numbers
-    // return {
-    //   row: Math.floor(worldPos.y) - this.worldOffset.y,
-    //   column: Math.floor(worldPos.x) - this.worldOffset.x,
-    // };
   }
 
   fillRandom() {
