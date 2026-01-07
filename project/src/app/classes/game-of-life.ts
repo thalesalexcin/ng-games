@@ -3,12 +3,10 @@ import { RandomService } from '../services/random-service';
 import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
 import { Grid } from './utils/grid';
-import { MathEx } from './utils/math-ex';
 
 export class GameOfLife {
   private currentState!: Grid<boolean>;
   private nextState!: Grid<boolean>;
-  private offsets: GridCoords[];
 
   private offCanvas!: OffscreenCanvas;
   private offCtx!: OffscreenCanvasRenderingContext2D;
@@ -28,16 +26,6 @@ export class GameOfLife {
     this.randomService = inject(RandomService);
     this.rows = this.height;
     this.columns = this.width;
-    this.offsets = [
-      { row: -1, column: -1 },
-      { row: -1, column: 0 },
-      { row: -1, column: 1 },
-      { row: 0, column: -1 },
-      { row: 0, column: 1 },
-      { row: 1, column: -1 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
-    ];
 
     this.offCanvas = new OffscreenCanvas(this.width, this.height);
     this.offCtx = this.offCanvas.getContext('2d')!;
@@ -87,35 +75,39 @@ export class GameOfLife {
   }
 
   update(deltaTime: number) {
+    const columns = this.columns;
+    const columnsInv = 1 / columns;
+    let aliveCount = 0;
     for (let i = 0; i < this.currentState.length; i++) {
-      let aliveCount = 0;
-      let currentCoord = this.currentState.indexToCoords(i);
-      for (let offset of this.offsets) {
-        let offsetCoord: GridCoords = {
-          column: currentCoord.column + offset.column,
-          row: currentCoord.row + offset.row,
-        };
+      const currentRow = Math.floor(i * columnsInv);
+      const currentColumn = i - columns * Math.floor(i * columnsInv);
 
-        offsetCoord.column = MathEx.mod(offsetCoord.column, this.columns);
-        offsetCoord.row = MathEx.mod(offsetCoord.row, this.rows);
+      const rowLeft = (currentRow - 1) * columns;
+      const rowRight = (currentRow + 1) * columns;
+      const columnUp = currentColumn - 1;
+      const columnDown = currentColumn + 1;
+      var dataRef = this.currentState.data;
+      aliveCount =
+        (dataRef[rowLeft + columnUp] ? 1 : 0) +
+        (dataRef[rowLeft + currentColumn] ? 1 : 0) +
+        (dataRef[rowLeft + columnDown] ? 1 : 0) +
+        (dataRef[currentRow * columns + columnUp] ? 1 : 0) +
+        (dataRef[currentRow * columns + columnDown] ? 1 : 0) +
+        (dataRef[rowRight + columnUp] ? 1 : 0) +
+        (dataRef[rowRight + currentColumn] ? 1 : 0) +
+        (dataRef[rowRight + columnDown] ? 1 : 0);
 
-        if (this.currentState.get(offsetCoord)) aliveCount++;
-      }
-
-      let isAlive = this.currentState.getByIndex(i);
-      if (isAlive) {
-        this.nextState.setAtIndex(i, aliveCount == 2 || aliveCount == 3);
-      } else {
-        this.nextState.setAtIndex(i, aliveCount == 3);
-      }
+      this.nextState.data[i] = aliveCount == 3 || (dataRef[i] && aliveCount == 2);
     }
 
-    this.currentState = this.nextState.copy();
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState.data[i] = this.nextState.data[i];
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
     for (let i = 0; i < this.currentState.length; i++) {
-      const alive = this.currentState.getByIndex(i);
+      const alive = this.currentState.data[i];
       const idx = i * 4;
 
       let isHovered = false;

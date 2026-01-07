@@ -2,7 +2,7 @@ import { GridCoords } from '../../models/grid-coords';
 import { MathEx } from './math-ex';
 
 export class Grid<T> {
-  private data: T[];
+  data: T[];
   private _length: number;
 
   constructor(private rows: number, private columns: number, defaultValue?: T) {
