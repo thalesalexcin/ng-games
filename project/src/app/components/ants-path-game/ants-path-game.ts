@@ -24,7 +24,9 @@ export class AntsPathGameComponent extends Entity {
     this.antPathLogic = new AntsPath(canvasWidth, canvasHeight, worldOffset);
   }
 
-  override initController(controller: CameraController): void {}
+  override initController(controller: CameraController): void {
+    controller.onWorldClick = (worldPos) => this.antPathLogic.addAnt(worldPos);
+  }
 
   override update(deltaTime: number): void {
     this.antPathLogic.update(deltaTime);

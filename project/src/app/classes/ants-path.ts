@@ -11,7 +11,7 @@ export class AntsPath {
 
   private randomService: RandomService;
 
-  private currentPosition: GridCoords;
+  private currentPosition: GridCoords[] = [];
 
   constructor(private width: number, private height: number, private worldOffset: Point) {
     this.randomService = inject(RandomService);
@@ -20,10 +20,10 @@ export class AntsPath {
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
 
-    this.currentPosition = {
+    this.currentPosition.push({
       column: 400,
       row: 300,
-    };
+    });
 
     this.reset();
   }
@@ -39,39 +39,52 @@ export class AntsPath {
     };
   }
 
+  addAnt(worldPos: Point): void {
+    let ant = this.worldToGridPos(worldPos);
+    this.currentPosition.push(ant);
+  }
+
+  currentFrame: number = 0;
   update(deltaTime: number) {
-    for (let i = 0; i < 100; i++) {
-      let direction = Math.floor(this.randomService.rnd() * 4);
-      switch (direction) {
-        case 0:
-          this.currentPosition.row--;
-          break;
-        case 1:
-          this.currentPosition.column--;
-          break;
-        case 2:
-          this.currentPosition.row++;
-          break;
-        case 3:
-          this.currentPosition.column++;
-          break;
+    this.currentFrame++;
+    for (let i = 0; i < 10; i++) {
+      for (let ant of this.currentPosition) {
+        let direction = Math.floor(this.randomService.rnd() * 4);
+        switch (direction) {
+          case 0:
+            ant.row--;
+            break;
+          case 1:
+            ant.column--;
+            break;
+          case 2:
+            ant.row++;
+            break;
+          case 3:
+            ant.column++;
+            break;
+        }
+
+        ant.column = MathEx.mod(ant.column, this.width);
+        ant.row = MathEx.mod(ant.row, this.height);
+
+        //Modifying imageBuffer here so iterations will take effect on drawing
+        let idx = MathEx.coordsToIndex(ant, this.width) * 4;
+        //TODO add util to convert RGB to imageBuffer data
+        this.imageBuffer.data[idx] = 255;
+        this.imageBuffer.data[idx + 1] += 128;
+        this.imageBuffer.data[idx + 2] = 255;
+        this.imageBuffer.data[idx + 3] = 255;
       }
-
-      this.currentPosition.column = MathEx.mod(this.currentPosition.column, this.width);
-      this.currentPosition.row = MathEx.mod(this.currentPosition.row, this.height);
-
-      //Modifying imageBuffer here so iterations will take effect on drawing
-      let idx = MathEx.coordsToIndex(this.currentPosition, this.width) * 4;
-      //TODO add util to convert RGB to imageBuffer data
-      this.imageBuffer.data[idx] = 255;
-      this.imageBuffer.data[idx + 1] += 12;
-
-      this.imageBuffer.data[idx + 3] = 255;
     }
 
     for (let i = 0; i < this.imageBuffer.data.length / 4; i++) {
       const idx = i * 4;
       this.imageBuffer.data[idx] -= 2;
+      if (this.currentFrame % 2 == 0) {
+        this.imageBuffer.data[idx + 1] -= 1;
+      }
+
       this.imageBuffer.data[idx + 3]--;
     }
   }
