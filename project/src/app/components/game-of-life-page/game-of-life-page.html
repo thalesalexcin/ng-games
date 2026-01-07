@@ -1,0 +1,57 @@
+<div class="text-light">
+  <div>
+    <h2 class="text-center">Conway's Game of Life</h2>
+  </div>
+  <div class="d-flex flex-row justify-content-center align-items-start">
+    <div class="d-flex flex-column flex-fill p-4">
+      <h3>Options</h3>
+      <button class="btn btn-light mb-2" (click)="onGenerateNewClick()">Generate New</button>
+      <div class="mb-2 form-floating">
+        <input class="form-control" type="text" [(ngModel)]="currentSeed" />
+        <label for="">Current Seed</label>
+      </div>
+      <div class="d-flex gap-2 mb-2">
+        <button class="btn btn-light flex-fill" (click)="onRestartClick()">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+        <button class="btn btn-light flex-fill" (click)="onStartPauseClick()">
+          <i [ngClass]="isPaused() ? 'fa-play' : 'fa-pause'" class="fa-solid"></i>
+        </button>
+        <button class="btn btn-light flex-fill" (click)="onNextGenerationClick()">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+        <button class="btn btn-light flex-fill" (click)="onClearClick()">
+          <i class="fa-solid fa-eraser"></i>
+        </button>
+      </div>
+      <div>
+        <label class="form-label" for="">Speed</label>
+        <input
+          class="bg-dark form-range"
+          type="range"
+          step="0.05"
+          min="0"
+          max="4"
+          [(ngModel)]="speedFactor"
+        />
+      </div>
+
+      <h3 class="mt-2">Info</h3>
+      <div class="mb-2 form-floating">
+        <input class="form-control" type="text" readonly [(ngModel)]="lastSeed" />
+        <label for="">Last Seed</label>
+      </div>
+
+      <ul class="list-group">
+        <li class="list-group-item">Zoom with mouse wheel</li>
+        <li class="list-group-item">Move by clicking with mouse wheel button</li>
+        <li class="list-group-item">Left click to toggle cell state</li>
+      </ul>
+    </div>
+    <div>
+      <app-game>
+        <app-game-of-life-game></app-game-of-life-game>
+      </app-game>
+    </div>
+  </div>
+</div>

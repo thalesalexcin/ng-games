@@ -21,6 +21,11 @@ import { ENTITY, Entity } from '../../classes/entity';
   styleUrl: './game.css',
 })
 export class GameComponent implements AfterViewInit {
+  nextTick() {
+    this.isPaused.set(true);
+    this.update(0);
+    this.draw();
+  }
   private canvasComponent = viewChild.required(CanvasComponent);
 
   entities = contentChildren<Entity>(ENTITY);
@@ -67,6 +72,7 @@ export class GameComponent implements AfterViewInit {
 
     for (let entity of this.entities()) {
       entity.init();
+      entity.initController(this.cameraController);
     }
   }
 
@@ -88,7 +94,7 @@ export class GameComponent implements AfterViewInit {
     }
   }
 
-  private draw() {
+  draw() {
     this.camera.apply(this.ctx);
     for (let entity of this.entities()) {
       entity.draw(this.ctx);

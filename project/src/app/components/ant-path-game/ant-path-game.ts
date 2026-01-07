@@ -2,6 +2,7 @@ import { Point } from '../../models/point';
 import { AntsPath } from '../../classes/ants-path';
 import { Component } from '@angular/core';
 import { ENTITY, Entity } from '../../classes/entity';
+import { CameraController } from '../../classes/camera-controller';
 
 @Component({
   selector: 'app-ant-path-game',
@@ -22,6 +23,9 @@ export class AntPathGameComponent extends Entity {
     };
     this.antPathLogic = new AntsPath(canvasWidth, canvasHeight, worldOffset);
   }
+
+  override initController(controller: CameraController): void {}
+
   override update(deltaTime: number): void {
     this.antPathLogic.update(deltaTime);
   }
