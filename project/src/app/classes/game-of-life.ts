@@ -91,38 +91,37 @@ export class GameOfLife {
 
   update(deltaTime: number) {
     this.nextGenerationScore += this.nextGenerationSpeed * this.speedFactor * deltaTime;
-
     if (this.nextGenerationScore >= 1) {
+      this.nextGenerationScore = 0;
       const columns = this.columns;
-      const columnsInv = 1 / columns;
       let aliveCount = 0;
-      for (let i = 0; i < this.currentState.length; i++) {
-        const currentRow = ~~(i * columnsInv);
-        const currentColumn = i - columns * currentRow;
 
-        const rowLeft = (currentRow - 1) * columns;
-        const rowRight = (currentRow + 1) * columns;
-        const rowCurrent = currentRow * columns;
-        const columnUp = currentColumn - 1;
-        const columnDown = currentColumn + 1;
-        var dataRef = this.currentState;
-        aliveCount =
-          dataRef[rowLeft + columnUp] +
-          dataRef[rowLeft + currentColumn] +
-          dataRef[rowLeft + columnDown] +
-          dataRef[rowCurrent + columnUp] +
-          dataRef[rowCurrent + columnDown] +
-          dataRef[rowRight + columnUp] +
-          dataRef[rowRight + currentColumn] +
-          dataRef[rowRight + columnDown];
+      for (let currentRow = 0; currentRow < this.height; currentRow++) {
+        for (let currentColumn = 0; currentColumn < this.width; currentColumn++) {
+          const rowLeft = (currentRow - 1) * columns;
+          const rowRight = (currentRow + 1) * columns;
+          const rowCurrent = currentRow * columns;
+          const columnUp = currentColumn - 1;
+          const columnDown = currentColumn + 1;
+          var dataRef = this.currentState;
+          aliveCount =
+            dataRef[rowLeft + columnUp] +
+            dataRef[rowLeft + currentColumn] +
+            dataRef[rowLeft + columnDown] +
+            dataRef[rowCurrent + columnUp] +
+            dataRef[rowCurrent + columnDown] +
+            dataRef[rowRight + columnUp] +
+            dataRef[rowRight + currentColumn] +
+            dataRef[rowRight + columnDown];
 
-        this.nextState[i] = aliveCount == 3 || (dataRef[i] && aliveCount == 2) ? 1 : 0;
+          const index = currentRow * this.width + currentColumn;
+          this.nextState[index] = aliveCount == 3 || (dataRef[index] && aliveCount == 2) ? 1 : 0;
+        }
       }
 
       for (let i = 0; i < this.currentState.length; i++) {
         this.currentState[i] = this.nextState[i];
       }
-      this.nextGenerationScore--;
     }
   }
 
