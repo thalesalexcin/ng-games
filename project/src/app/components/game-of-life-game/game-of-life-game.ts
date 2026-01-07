@@ -14,6 +14,10 @@ import { CameraController } from '../../classes/camera-controller';
 export class GameOfLifeGame extends Entity {
   private gameOfLife!: GameOfLife;
 
+  setSpeedFactor(speedFactor: number) {
+    this.gameOfLife.speedFactor = speedFactor;
+  }
+
   fillRandom() {
     this.gameOfLife.fillRandom();
   }

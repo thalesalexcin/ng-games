@@ -50,6 +50,10 @@ export class GameOfLifePage {
     this.game().nextTick();
   }
 
+  onSpeedFactorInput() {
+    this.gameOfLifeGame().setSpeedFactor(this.speedFactor());
+  }
+
   generateNewSeed() {
     this.lastSeed.set(this.currentSeed());
     this.currentSeed.set(Math.floor(Math.random() * 3541684621335).toString());

@@ -74,34 +74,43 @@ export class GameOfLife {
     }
   }
 
+  nextGenerationScore: number = 0;
+  nextGenerationSpeed: number = 15;
+  speedFactor: number = 1;
+
   update(deltaTime: number) {
-    const columns = this.columns;
-    const columnsInv = 1 / columns;
-    let aliveCount = 0;
-    for (let i = 0; i < this.currentState.length; i++) {
-      const currentRow = Math.floor(i * columnsInv);
-      const currentColumn = i - columns * Math.floor(i * columnsInv);
+    this.nextGenerationScore += this.nextGenerationSpeed * this.speedFactor * deltaTime;
 
-      const rowLeft = (currentRow - 1) * columns;
-      const rowRight = (currentRow + 1) * columns;
-      const columnUp = currentColumn - 1;
-      const columnDown = currentColumn + 1;
-      var dataRef = this.currentState.data;
-      aliveCount =
-        (dataRef[rowLeft + columnUp] ? 1 : 0) +
-        (dataRef[rowLeft + currentColumn] ? 1 : 0) +
-        (dataRef[rowLeft + columnDown] ? 1 : 0) +
-        (dataRef[currentRow * columns + columnUp] ? 1 : 0) +
-        (dataRef[currentRow * columns + columnDown] ? 1 : 0) +
-        (dataRef[rowRight + columnUp] ? 1 : 0) +
-        (dataRef[rowRight + currentColumn] ? 1 : 0) +
-        (dataRef[rowRight + columnDown] ? 1 : 0);
+    if (this.nextGenerationScore >= 1) {
+      const columns = this.columns;
+      const columnsInv = 1 / columns;
+      let aliveCount = 0;
+      for (let i = 0; i < this.currentState.length; i++) {
+        const currentRow = Math.floor(i * columnsInv);
+        const currentColumn = i - columns * Math.floor(i * columnsInv);
 
-      this.nextState.data[i] = aliveCount == 3 || (dataRef[i] && aliveCount == 2);
-    }
+        const rowLeft = (currentRow - 1) * columns;
+        const rowRight = (currentRow + 1) * columns;
+        const columnUp = currentColumn - 1;
+        const columnDown = currentColumn + 1;
+        var dataRef = this.currentState.data;
+        aliveCount =
+          (dataRef[rowLeft + columnUp] ? 1 : 0) +
+          (dataRef[rowLeft + currentColumn] ? 1 : 0) +
+          (dataRef[rowLeft + columnDown] ? 1 : 0) +
+          (dataRef[currentRow * columns + columnUp] ? 1 : 0) +
+          (dataRef[currentRow * columns + columnDown] ? 1 : 0) +
+          (dataRef[rowRight + columnUp] ? 1 : 0) +
+          (dataRef[rowRight + currentColumn] ? 1 : 0) +
+          (dataRef[rowRight + columnDown] ? 1 : 0);
 
-    for (let i = 0; i < this.currentState.length; i++) {
-      this.currentState.data[i] = this.nextState.data[i];
+        this.nextState.data[i] = aliveCount == 3 || (dataRef[i] && aliveCount == 2);
+      }
+
+      for (let i = 0; i < this.currentState.length; i++) {
+        this.currentState.data[i] = this.nextState.data[i];
+      }
+      this.nextGenerationScore--;
     }
   }
 
