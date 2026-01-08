@@ -49,13 +49,13 @@ export class Camera {
     this.position.y = MathEx.clamp(this.position.y, -heightLimits, heightLimits);
   }
 
-  zoomAt(screnPoint: Point, zoomDelta: number) {
-    let world = this.screenToWorld(screnPoint);
+  zoomAt(screenPoint: Point, zoomDelta: number) {
+    let world = this.screenToWorld(screenPoint);
 
     this.zoom += zoomDelta;
     this.zoom = Math.max(this.zoom, 1);
 
-    let newWorld = this.screenToWorld(screnPoint);
+    let newWorld = this.screenToWorld(screenPoint);
 
     let worldDiff = {
       x: newWorld.x - world.x,

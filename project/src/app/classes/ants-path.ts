@@ -16,7 +16,12 @@ export class AntsPath {
   //TODO temporary WILL BE WIPED OUT SOON I PROMISE
   private currentFrame: number = 0;
 
-  constructor(private width: number, private height: number, private worldOffset: Point) {
+  constructor(
+    private width: number,
+    private height: number,
+    private worldOffset: Point,
+    private aspectRatio: number
+  ) {
     this.offCanvas = new OffscreenCanvas(this.width, this.height);
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
@@ -40,8 +45,8 @@ export class AntsPath {
 
   private worldToGridPos(worldPos: Point): GridCoords {
     return {
-      row: Math.floor(worldPos.y - this.worldOffset.y),
-      column: Math.floor(worldPos.x - this.worldOffset.x),
+      row: Math.floor(worldPos.y / this.aspectRatio - this.worldOffset.y),
+      column: Math.floor(worldPos.x / this.aspectRatio - this.worldOffset.x),
     };
   }
 
@@ -95,10 +100,10 @@ export class AntsPath {
 
     ctx.drawImage(
       this.offCanvas,
-      this.worldOffset.x,
-      this.worldOffset.y,
-      this.imageBuffer.width,
-      this.imageBuffer.height
+      this.worldOffset.x * this.aspectRatio,
+      this.worldOffset.y * this.aspectRatio,
+      this.imageBuffer.width * this.aspectRatio,
+      this.imageBuffer.height * this.aspectRatio
     );
   }
 }

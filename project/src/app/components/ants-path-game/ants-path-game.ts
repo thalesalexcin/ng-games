@@ -1,6 +1,6 @@
 import { Point } from '../../models/point';
 import { AntsPath } from '../../classes/ants-path';
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ENTITY, Entity } from '../../classes/entity';
 import { CameraController } from '../../classes/camera-controller';
 
@@ -14,12 +14,16 @@ import { CameraController } from '../../classes/camera-controller';
 export class AntsPathGameComponent extends Entity {
   private antPathLogic!: AntsPath;
 
+  gridWidth = input<number>(800);
+  gridHeight = input<number>(600);
+
   override init(canvasWidth: number, canvasHeight: number): void {
     let worldOffset: Point = {
-      x: -canvasWidth * 0.5,
-      y: -canvasHeight * 0.5,
+      x: -this.gridWidth() * 0.5,
+      y: -this.gridHeight() * 0.5,
     };
-    this.antPathLogic = new AntsPath(canvasWidth, canvasHeight, worldOffset);
+    let aspectRatio = canvasWidth / this.gridWidth();
+    this.antPathLogic = new AntsPath(this.gridWidth(), this.gridHeight(), worldOffset, aspectRatio);
   }
 
   override initController(controller: CameraController): void {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ENTITY, Entity } from '../../classes/entity';
 import { GameOfLife } from '../../classes/game-of-life';
 import { Point } from '../../models/point';
@@ -14,6 +14,9 @@ import { CameraController } from '../../classes/camera-controller';
 export class GameOfLifeGame extends Entity {
   private gameOfLife!: GameOfLife;
 
+  gridWidth = input<number>(800);
+  gridHeight = input<number>(600);
+
   setSpeedFactor(speedFactor: number) {
     this.gameOfLife.speedFactor = speedFactor;
   }
@@ -27,10 +30,12 @@ export class GameOfLifeGame extends Entity {
 
   override init(canvasWidth: number, canvasHeight: number): void {
     let worldOffset: Point = {
-      x: -canvasWidth * 0.5,
-      y: -canvasHeight * 0.5,
+      x: -this.gridWidth() * 0.5,
+      y: -this.gridHeight() * 0.5,
     };
-    this.gameOfLife = new GameOfLife(canvasWidth, canvasHeight, worldOffset);
+
+    let aspectRatio = canvasWidth / this.gridWidth();
+    this.gameOfLife = new GameOfLife(this.gridWidth(), this.gridHeight(), worldOffset, aspectRatio);
   }
 
   override initController(controller: CameraController): void {

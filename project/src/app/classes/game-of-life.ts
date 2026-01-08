@@ -26,7 +26,12 @@ export class GameOfLife {
     }
   }
 
-  constructor(private width: number, private height: number, private worldOffset: Point) {
+  constructor(
+    private width: number,
+    private height: number,
+    private worldOffset: Point,
+    private aspectRatio: number
+  ) {
     this.randomService = inject(RandomService);
     this.rows = this.height;
     this.columns = this.width;
@@ -67,8 +72,8 @@ export class GameOfLife {
 
   worldToGridPos(worldPos: Point): GridCoords {
     return {
-      row: Math.floor(worldPos.y - this.worldOffset.y),
-      column: Math.floor(worldPos.x - this.worldOffset.x),
+      row: Math.floor(worldPos.y / this.aspectRatio - this.worldOffset.y),
+      column: Math.floor(worldPos.x / this.aspectRatio - this.worldOffset.x),
     };
   }
 
@@ -139,10 +144,10 @@ export class GameOfLife {
 
     ctx.drawImage(
       this.offCanvas,
-      this.worldOffset.x,
-      this.worldOffset.y,
-      this.imageBuffer.width,
-      this.imageBuffer.height
+      this.worldOffset.x * this.aspectRatio,
+      this.worldOffset.y * this.aspectRatio,
+      this.imageBuffer.width * this.aspectRatio,
+      this.imageBuffer.height * this.aspectRatio
     );
   }
 }

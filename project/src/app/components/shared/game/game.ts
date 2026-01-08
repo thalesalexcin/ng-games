@@ -38,8 +38,8 @@ export class GameComponent implements AfterViewInit {
   protected camera!: Camera;
   protected cameraController!: CameraController;
 
-  gridWidth = input<number>(800);
-  gridHeight = input<number>(600);
+  canvasWidth = input<number>(800);
+  canvasHeight = input<number>(600);
 
   get ctx(): CanvasRenderingContext2D {
     return this.canvasComponent().ctx;
@@ -58,11 +58,10 @@ export class GameComponent implements AfterViewInit {
   }
 
   private initGameComponents() {
-    let canvasWidth = this.ctx.canvas.width;
-    let canvasHeight = this.ctx.canvas.height;
+    let canvasWidth = this.canvasWidth();
+    let canvasHeight = this.canvasHeight();
 
-    this.camera = new Camera(this.gridWidth(), this.gridHeight());
-
+    this.camera = new Camera(canvasWidth, canvasHeight);
     let cameraConstraints: CameraConstraints = {
       width: canvasWidth,
       height: canvasHeight,
