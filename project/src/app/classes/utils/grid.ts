@@ -2,8 +2,12 @@ import { GridCoords } from '../../models/grid-coords';
 import { MathEx } from './math-ex';
 
 export class Grid<T> {
-  data: T[];
+  private data: T[];
+
   private _length: number;
+  get length(): number {
+    return this._length;
+  }
 
   constructor(private rows: number, private columns: number, defaultValue?: T) {
     this._length = rows * columns;
@@ -15,12 +19,6 @@ export class Grid<T> {
         this.data[i] = defaultValue;
       }
     }
-  }
-
-  copy(): Grid<T> {
-    let copy = new Grid<T>(this.rows, this.columns);
-    copy.data = [...this.data];
-    return copy;
   }
 
   getByIndex(index: number): T {
@@ -42,7 +40,11 @@ export class Grid<T> {
   }
 
   coordsToIndex(coords: GridCoords): number {
-    return coords.row * this.columns + coords.column;
+    return MathEx.coordsToIndex(coords, this.columns);
+  }
+
+  indexToCoords(index: number): GridCoords {
+    return MathEx.indexToCoords(index, this.columns);
   }
 
   isValidIndex(index: number): boolean {
@@ -56,18 +58,5 @@ export class Grid<T> {
       coords.column >= 0 &&
       coords.column < this.columns
     );
-  }
-
-  indexToCoords(index: number): GridCoords {
-    let coords: GridCoords = {
-      row: Math.floor(index / this.columns),
-      column: MathEx.mod(index, this.columns),
-    };
-
-    return coords;
-  }
-
-  get length(): number {
-    return this._length;
   }
 }
