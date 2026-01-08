@@ -22,11 +22,6 @@ import { ENTITY, Entity } from '../../../classes/entity';
   styleUrl: './game.css',
 })
 export class GameComponent implements AfterViewInit {
-  nextTick() {
-    this.isPaused.set(true);
-    this.update(0);
-    this.draw();
-  }
   private canvasComponent = viewChild.required(CanvasComponent);
 
   entities = contentChildren<Entity>(ENTITY);
@@ -55,6 +50,10 @@ export class GameComponent implements AfterViewInit {
     this.zone.runOutsideAngular(() => {
       requestAnimationFrame((t) => this.gameLoop(t));
     });
+  }
+
+  forceDraw() {
+    this.draw();
   }
 
   private initGameComponents() {
@@ -95,7 +94,7 @@ export class GameComponent implements AfterViewInit {
     }
   }
 
-  draw() {
+  private draw() {
     this.camera.apply(this.ctx);
     for (let entity of this.entities()) {
       entity.draw(this.ctx);

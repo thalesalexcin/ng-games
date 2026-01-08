@@ -17,6 +17,10 @@ export class GameOfLifeGame extends Entity {
   gridWidth = input<number>(800);
   gridHeight = input<number>(600);
 
+  nextGeneration() {
+    this.gameOfLife.forceNextGeneration();
+  }
+
   setSpeedFactor(speedFactor: number) {
     this.gameOfLife.speedFactor = speedFactor;
   }

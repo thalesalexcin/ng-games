@@ -87,40 +87,48 @@ export class GameOfLife {
   nextGenerationSpeed: number = 15;
   speedFactor: number = 1;
 
+  forceNextGeneration() {
+    this.nextGeneration();
+  }
+
   update(deltaTime: number) {
     this.nextGenerationScore += this.nextGenerationSpeed * this.speedFactor * deltaTime;
     if (this.nextGenerationScore >= 1) {
       this.nextGenerationScore = 0;
-      const columns = this.columns;
-      let aliveCount = 0;
+      this.nextGeneration();
+    }
+  }
 
-      for (let currentRow = 0; currentRow < this.height; currentRow++) {
-        for (let currentColumn = 0; currentColumn < this.width; currentColumn++) {
-          //TODO optimised but if it goes out of the screen it wont teleport to the other side, not important for now
-          const rowLeft = (currentRow - 1) * columns;
-          const rowRight = (currentRow + 1) * columns;
-          const rowCurrent = currentRow * columns;
-          const columnUp = currentColumn - 1;
-          const columnDown = currentColumn + 1;
-          var dataRef = this.currentState;
-          aliveCount =
-            dataRef[rowLeft + columnUp] +
-            dataRef[rowLeft + currentColumn] +
-            dataRef[rowLeft + columnDown] +
-            dataRef[rowCurrent + columnUp] +
-            dataRef[rowCurrent + columnDown] +
-            dataRef[rowRight + columnUp] +
-            dataRef[rowRight + currentColumn] +
-            dataRef[rowRight + columnDown];
+  private nextGeneration() {
+    const columns = this.columns;
+    let aliveCount = 0;
 
-          const index = currentRow * this.width + currentColumn;
-          this.nextState[index] = aliveCount == 3 || (dataRef[index] && aliveCount == 2) ? 1 : 0;
-        }
+    for (let currentRow = 0; currentRow < this.height; currentRow++) {
+      for (let currentColumn = 0; currentColumn < this.width; currentColumn++) {
+        //TODO optimised but if it goes out of the screen it wont teleport to the other side, not important for now
+        const rowLeft = (currentRow - 1) * columns;
+        const rowRight = (currentRow + 1) * columns;
+        const rowCurrent = currentRow * columns;
+        const columnUp = currentColumn - 1;
+        const columnDown = currentColumn + 1;
+        var dataRef = this.currentState;
+        aliveCount =
+          dataRef[rowLeft + columnUp] +
+          dataRef[rowLeft + currentColumn] +
+          dataRef[rowLeft + columnDown] +
+          dataRef[rowCurrent + columnUp] +
+          dataRef[rowCurrent + columnDown] +
+          dataRef[rowRight + columnUp] +
+          dataRef[rowRight + currentColumn] +
+          dataRef[rowRight + columnDown];
+
+        const index = currentRow * this.width + currentColumn;
+        this.nextState[index] = aliveCount == 3 || (dataRef[index] && aliveCount == 2) ? 1 : 0;
       }
+    }
 
-      for (let i = 0; i < this.currentState.length; i++) {
-        this.currentState[i] = this.nextState[i];
-      }
+    for (let i = 0; i < this.currentState.length; i++) {
+      this.currentState[i] = this.nextState[i];
     }
   }
 
