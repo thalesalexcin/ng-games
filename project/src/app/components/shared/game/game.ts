@@ -4,6 +4,7 @@ import {
   contentChildren,
   inject,
   Injector,
+  input,
   NgZone,
   runInInjectionContext,
   signal,
@@ -37,8 +38,8 @@ export class GameComponent implements AfterViewInit {
   protected camera!: Camera;
   protected cameraController!: CameraController;
 
-  protected gridWidth = 800;
-  protected gridHeight = 600;
+  gridWidth = input<number>(800);
+  gridHeight = input<number>(600);
 
   get ctx(): CanvasRenderingContext2D {
     return this.canvasComponent().ctx;
@@ -60,7 +61,8 @@ export class GameComponent implements AfterViewInit {
     let canvasWidth = this.ctx.canvas.width;
     let canvasHeight = this.ctx.canvas.height;
 
-    this.camera = new Camera(this.gridWidth, this.gridHeight);
+    this.camera = new Camera(this.gridWidth(), this.gridHeight());
+
     let cameraConstraints: CameraConstraints = {
       width: canvasWidth,
       height: canvasHeight,
@@ -71,7 +73,7 @@ export class GameComponent implements AfterViewInit {
     this.canvasComponent().setController(this.cameraController);
 
     for (let entity of this.entities()) {
-      entity.init();
+      entity.init(canvasWidth, canvasHeight);
       entity.initController(this.cameraController);
     }
   }

@@ -14,9 +14,7 @@ import { CameraController } from '../../classes/camera-controller';
 export class AntsPathGameComponent extends Entity {
   private antPathLogic!: AntsPath;
 
-  override init(): void {
-    let canvasWidth = 800;
-    let canvasHeight = 600;
+  override init(canvasWidth: number, canvasHeight: number): void {
     let worldOffset: Point = {
       x: -canvasWidth * 0.5,
       y: -canvasHeight * 0.5,

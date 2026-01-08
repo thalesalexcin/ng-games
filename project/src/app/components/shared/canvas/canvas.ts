@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, input, ViewChild } from '@angular/core';
 import { InputController } from '../../../classes/input-controller';
 import { DefaultController } from '../../../classes/default-controller';
 
@@ -12,8 +12,8 @@ export class CanvasComponent implements AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   ctx!: CanvasRenderingContext2D;
 
-  canvasWidth = 800;
-  canvasHeight = 600;
+  canvasWidth = input<number>(800);
+  canvasHeight = input<number>(600);
 
   private currentController: InputController;
 
