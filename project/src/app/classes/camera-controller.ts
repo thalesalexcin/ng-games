@@ -34,6 +34,10 @@ export class CameraController extends InputController {
     }
   }
 
+  setConstraints(newConstraints: CameraConstraints) {
+    this.constraints = newConstraints;
+  }
+
   override onMouseUp(event: MouseEvent): void {
     if (event.button == 1) {
       this.isMouseButtonDown = false;

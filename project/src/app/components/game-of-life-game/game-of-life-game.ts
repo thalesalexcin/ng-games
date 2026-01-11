@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { ENTITY, Entity } from '../../classes/entity';
-import { GameOfLife } from '../../classes/game-of-life';
+import { GAME_MODE, GameMode } from '../../classes/game-mode';
+import { GameOfLifeLogic } from '../../classes/game-of-life';
 import { Point } from '../../models/point';
 import { CameraController } from '../../classes/camera-controller';
 
@@ -9,26 +9,27 @@ import { CameraController } from '../../classes/camera-controller';
   imports: [],
   templateUrl: './game-of-life-game.html',
   styleUrl: './game-of-life-game.css',
-  providers: [{ provide: ENTITY, useExisting: GameOfLifeGame }],
+  providers: [{ provide: GAME_MODE, useExisting: GameOfLifeGameMode }],
 })
-export class GameOfLifeGame extends Entity {
-  private gameOfLife!: GameOfLife;
+export class GameOfLifeGameMode extends GameMode {
+  public gridWidth = input<number>(800);
+  public gridHeight = input<number>(600);
 
-  gridWidth = input<number>(800);
-  gridHeight = input<number>(600);
+  private gameOfLife!: GameOfLifeLogic;
 
-  nextGeneration() {
+  public nextGeneration() {
     this.gameOfLife.forceNextGeneration();
   }
 
-  setSpeedFactor(speedFactor: number) {
+  public setSpeedFactor(speedFactor: number) {
     this.gameOfLife.speedFactor = speedFactor;
   }
 
-  fillRandom() {
+  public fillRandom() {
     this.gameOfLife.fillRandom();
   }
-  reset() {
+
+  public reset() {
     this.gameOfLife.reset();
   }
 
@@ -39,7 +40,12 @@ export class GameOfLifeGame extends Entity {
     };
 
     let aspectRatio = canvasWidth / this.gridWidth();
-    this.gameOfLife = new GameOfLife(this.gridWidth(), this.gridHeight(), worldOffset, aspectRatio);
+    this.gameOfLife = new GameOfLifeLogic(
+      this.gridWidth(),
+      this.gridHeight(),
+      worldOffset,
+      aspectRatio
+    );
   }
 
   override initController(controller: CameraController): void {
@@ -61,4 +67,6 @@ export class GameOfLifeGame extends Entity {
   override draw(ctx: CanvasRenderingContext2D): void {
     this.gameOfLife.draw(ctx);
   }
+
+  override resize(canvasWidth: number, canvasHeight: number): void {}
 }

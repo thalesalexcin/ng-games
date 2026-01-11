@@ -15,7 +15,7 @@
           <i class="fa-solid fa-rotate-right"></i>
         </button>
         <button class="btn btn-light flex-fill" (click)="onStartPauseClick()">
-          <i [ngClass]="isPaused() ? 'fa-play' : 'fa-pause'" class="fa-solid"></i>
+          <i [ngClass]="isPaused ? 'fa-play' : 'fa-pause'" class="fa-solid"></i>
         </button>
         <button class="btn btn-light flex-fill" (click)="onNextGenerationClick()">
           <i class="fa-solid fa-forward-step"></i>

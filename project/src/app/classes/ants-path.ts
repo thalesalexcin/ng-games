@@ -4,6 +4,22 @@ import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
 import { MathEx } from './utils/math-ex';
 
+export interface Ant {
+  coords: GridCoords;
+  config: AntConfig;
+}
+
+export interface AntConfig {
+  speed: number;
+  size: number;
+  r: number;
+  g: number;
+  b: number;
+  rd: number;
+  gd: number;
+  bd: number;
+}
+
 export class AntsPath {
   private offCanvas!: OffscreenCanvas;
   private offCtx!: OffscreenCanvasRenderingContext2D;
@@ -11,10 +27,20 @@ export class AntsPath {
 
   private randomService: RandomService = inject(RandomService);
 
-  private ants: GridCoords[] = [];
+  private ants: Ant[] = [];
 
   //TODO temporary WILL BE WIPED OUT SOON I PROMISE
   private currentFrame: number = 0;
+  private antConfig: AntConfig = {
+    speed: 10,
+    size: 1,
+    r: 255,
+    g: 0,
+    b: 255,
+    rd: 0,
+    gd: 128,
+    bd: 0,
+  };
 
   constructor(
     private width: number,
@@ -26,21 +52,28 @@ export class AntsPath {
     this.offCtx = this.offCanvas.getContext('2d')!;
     this.offCtx.imageSmoothingEnabled = false;
 
-    this.ants.push({
-      column: -worldOffset.x,
-      row: -worldOffset.y,
-    });
-
     this.reset();
   }
 
+  setAspectRatio(newAspectRatio: number) {
+    this.aspectRatio = newAspectRatio;
+  }
+
   reset() {
+    this.offCanvas = new OffscreenCanvas(this.width, this.height);
+    this.offCtx = this.offCanvas.getContext('2d')!;
+    this.offCtx.imageSmoothingEnabled = false;
     this.imageBuffer = this.offCtx.createImageData(this.width, this.height);
   }
 
-  addAnt(worldPos: Point): void {
-    let ant = this.worldToGridPos(worldPos);
-    this.ants.push(ant);
+  addAnt(worldPos: Point, amount: number): void {
+    for (let i = 0; i < amount; i++) {
+      let ant: Ant = {
+        config: { ...this.antConfig },
+        coords: this.worldToGridPos(worldPos),
+      };
+      this.ants.push({ ...ant });
+    }
   }
 
   private worldToGridPos(worldPos: Point): GridCoords {
@@ -52,33 +85,36 @@ export class AntsPath {
 
   update(deltaTime: number) {
     this.currentFrame++;
-    for (let i = 0; i < 10; i++) {
-      for (let ant of this.ants) {
+    for (let ant of this.ants) {
+      for (let i = 0; i < ant.config.speed; i++) {
         let direction = Math.floor(this.randomService.rnd() * 4);
         switch (direction) {
           case 0:
-            ant.row--;
+            ant.coords.row--;
             break;
           case 1:
-            ant.column--;
+            ant.coords.column--;
             break;
           case 2:
-            ant.row++;
+            ant.coords.row++;
             break;
           case 3:
-            ant.column++;
+            ant.coords.column++;
             break;
         }
 
-        ant.column = MathEx.mod(ant.column, this.width);
-        ant.row = MathEx.mod(ant.row, this.height);
+        ant.coords.column = MathEx.mod(ant.coords.column, this.width);
+        ant.coords.row = MathEx.mod(ant.coords.row, this.height);
 
         //Modifying imageBuffer here so iterations will take effect on drawing
-        let idx = MathEx.coordsToIndex(ant, this.width) * 4;
+        let idx = MathEx.coordsToIndex(ant.coords, this.width) * 4;
         //TODO add util to convert RGB to imageBuffer data
-        this.imageBuffer.data[idx] = 255;
-        this.imageBuffer.data[idx + 1] += 128;
-        this.imageBuffer.data[idx + 2] = 255;
+        this.imageBuffer.data[idx] =
+          ant.config.r + (ant.config.rd != 0 ? this.imageBuffer.data[idx] + ant.config.rd : 0);
+        this.imageBuffer.data[idx + 1] =
+          ant.config.g + (ant.config.gd != 0 ? this.imageBuffer.data[idx + 1] + ant.config.gd : 0);
+        this.imageBuffer.data[idx + 2] =
+          ant.config.b + (ant.config.bd != 0 ? this.imageBuffer.data[idx + 2] + ant.config.bd : 0);
         this.imageBuffer.data[idx + 3] = 255;
       }
     }

@@ -3,8 +3,9 @@
     <h2 class="text-center">Ant Path</h2>
   </div>
   <div>
-    <app-game>
+    <app-game [canvasWidth]="canvasWidth" [canvasHeight]="canvasHeight" [fullscreenEnabled]="true">
       <app-ants-path-game></app-ants-path-game>
     </app-game>
   </div>
+  <button class="btn btn-light" (click)="onFullscreenButtonClick()">Fullscreen</button>
 </div>

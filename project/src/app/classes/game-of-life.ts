@@ -3,7 +3,7 @@ import { RandomService } from '../services/random-service';
 import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
 
-export class GameOfLife {
+export class GameOfLifeLogic {
   private currentState!: Uint8Array;
   private nextState!: Uint8Array;
 

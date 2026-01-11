@@ -1,7 +1,7 @@
 import { Point } from '../../models/point';
 import { AntsPath } from '../../classes/ants-path';
-import { Component, input } from '@angular/core';
-import { ENTITY, Entity } from '../../classes/entity';
+import { Component } from '@angular/core';
+import { GAME_MODE, GameMode } from '../../classes/game-mode';
 import { CameraController } from '../../classes/camera-controller';
 
 @Component({
@@ -9,25 +9,29 @@ import { CameraController } from '../../classes/camera-controller';
   templateUrl: './ants-path-game.html',
   styleUrl: './ants-path-game.css',
   imports: [],
-  providers: [{ provide: ENTITY, useExisting: AntsPathGameComponent }],
+  providers: [{ provide: GAME_MODE, useExisting: AntsPathGameMode }],
 })
-export class AntsPathGameComponent extends Entity {
+export class AntsPathGameMode extends GameMode {
   private antPathLogic!: AntsPath;
 
-  gridWidth = input<number>(800);
-  gridHeight = input<number>(600);
-
   override init(canvasWidth: number, canvasHeight: number): void {
+    let gridWidth = screen.width;
+    let gridHeight = screen.height;
     let worldOffset: Point = {
-      x: -this.gridWidth() * 0.5,
-      y: -this.gridHeight() * 0.5,
+      x: -gridWidth * 0.5,
+      y: -gridHeight * 0.5,
     };
-    let aspectRatio = canvasWidth / this.gridWidth();
-    this.antPathLogic = new AntsPath(this.gridWidth(), this.gridHeight(), worldOffset, aspectRatio);
+    let aspectRatio = canvasWidth / gridWidth;
+    this.antPathLogic = new AntsPath(gridWidth, gridHeight, worldOffset, aspectRatio);
+  }
+
+  override resize(width: number, height: number): void {
+    let aspectRatio = width / screen.width;
+    this.antPathLogic.setAspectRatio(aspectRatio);
   }
 
   override initController(controller: CameraController): void {
-    controller.onWorldClick = (worldPos) => this.antPathLogic.addAnt(worldPos);
+    controller.onWorldClick = (worldPos) => this.antPathLogic.addAnt(worldPos, 10);
   }
 
   override update(deltaTime: number): void {

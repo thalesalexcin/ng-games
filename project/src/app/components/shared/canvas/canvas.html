@@ -1,6 +1,6 @@
 <canvas
-  class="border shadow"
   #gameCanvas
+  [ngClass]="isFullscreen() ? 'fullscreen' : 'border shadow'"
   [width]="canvasWidth()"
   [height]="canvasHeight()"
   (mousedown)="onCanvasMouseDown($event)"

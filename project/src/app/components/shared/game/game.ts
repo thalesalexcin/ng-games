@@ -13,7 +13,7 @@ import {
 import { CanvasComponent } from '../canvas/canvas';
 import { Camera, CameraConstraints } from '../../../classes/camera';
 import { CameraController } from '../../../classes/camera-controller';
-import { ENTITY, Entity } from '../../../classes/entity';
+import { GAME_MODE, GameMode } from '../../../classes/game-mode';
 
 @Component({
   selector: 'app-game',
@@ -22,28 +22,36 @@ import { ENTITY, Entity } from '../../../classes/entity';
   styleUrl: './game.css',
 })
 export class GameComponent implements AfterViewInit {
-  private canvasComponent = viewChild.required(CanvasComponent);
+  public canvasWidth = input<number>(800);
+  public canvasHeight = input<number>(600);
+  public fullscreenEnabled = input<boolean>(false);
 
-  entities = contentChildren<Entity>(ENTITY);
+  private canvasComponent = viewChild.required(CanvasComponent);
+  private gameModes = contentChildren<GameMode>(GAME_MODE);
 
   private zone = inject(NgZone);
   private injector = inject(Injector);
-  isPaused = signal<boolean>(false);
+  private _isPaused = false;
 
-  protected camera!: Camera;
-  protected cameraController!: CameraController;
+  private camera!: Camera;
+  private cameraController!: CameraController;
 
-  canvasWidth = input<number>(800);
-  canvasHeight = input<number>(600);
-
-  get ctx(): CanvasRenderingContext2D {
+  private get ctx(): CanvasRenderingContext2D {
     return this.canvasComponent().ctx;
   }
 
   private FRAME_DURATION = 1 / 60; //TODO make it 60 fps and on it's own component ms per frame
   private lastFrameTime = 0;
 
-  ngAfterViewInit(): void {
+  public isPaused() {
+    return this._isPaused;
+  }
+
+  public setPaused(value: boolean) {
+    this._isPaused = value;
+  }
+
+  public ngAfterViewInit(): void {
     runInInjectionContext(this.injector, () => {
       this.initGameComponents();
     });
@@ -52,13 +60,27 @@ export class GameComponent implements AfterViewInit {
     });
   }
 
-  forceDraw() {
-    this.draw();
+  public toggleFullscreen() {
+    this.canvasComponent().toggleFullscreenMode();
+  }
+
+  protected onCanvasResize() {
+    this.camera.resizeViewport(this.ctx.canvas.width, this.ctx.canvas.height);
+    let cameraConstraints: CameraConstraints = {
+      width: this.ctx.canvas.width,
+      height: this.ctx.canvas.height,
+    };
+
+    this.cameraController.setConstraints(cameraConstraints);
+
+    for (let gameMode of this.gameModes()) {
+      gameMode.resize(this.ctx.canvas.width, this.ctx.canvas.height);
+    }
   }
 
   private initGameComponents() {
-    let canvasWidth = this.canvasWidth();
-    let canvasHeight = this.canvasHeight();
+    let canvasWidth = this.ctx.canvas.width;
+    let canvasHeight = this.ctx.canvas.height;
 
     this.camera = new Camera(canvasWidth, canvasHeight);
     let cameraConstraints: CameraConstraints = {
@@ -70,9 +92,9 @@ export class GameComponent implements AfterViewInit {
 
     this.canvasComponent().setController(this.cameraController);
 
-    for (let entity of this.entities()) {
-      entity.init(canvasWidth, canvasHeight);
-      entity.initController(this.cameraController);
+    for (let gameMode of this.gameModes()) {
+      gameMode.init(canvasWidth, canvasHeight);
+      gameMode.initController(this.cameraController);
     }
   }
 
@@ -80,7 +102,7 @@ export class GameComponent implements AfterViewInit {
     const deltaTime = (time - this.lastFrameTime) / 1000;
     if (deltaTime > this.FRAME_DURATION) {
       this.lastFrameTime = time;
-      if (!this.isPaused()) {
+      if (!this._isPaused) {
         this.update(deltaTime);
       }
     }
@@ -89,15 +111,15 @@ export class GameComponent implements AfterViewInit {
   }
 
   private update(deltaTime: number) {
-    for (let entity of this.entities()) {
+    for (let entity of this.gameModes()) {
       entity.update(deltaTime);
     }
   }
 
   private draw() {
     this.camera.apply(this.ctx);
-    for (let entity of this.entities()) {
-      entity.draw(this.ctx);
+    for (let gameMode of this.gameModes()) {
+      gameMode.draw(this.ctx);
     }
   }
 }

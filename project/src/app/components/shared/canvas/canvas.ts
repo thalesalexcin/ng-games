@@ -1,34 +1,41 @@
-import { AfterViewInit, Component, ElementRef, input, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  input,
+  output,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { InputController } from '../../../classes/input-controller';
 import { DefaultController } from '../../../classes/default-controller';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-canvas',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './canvas.html',
   styleUrl: './canvas.css',
 })
 export class CanvasComponent implements AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
-  ctx!: CanvasRenderingContext2D;
+  public ctx!: CanvasRenderingContext2D;
 
-  canvasWidth = input<number>(800);
-  canvasHeight = input<number>(600);
+  protected isFullscreen = signal<boolean>(false);
+  public canvasWidth = input<number>(800);
+  public canvasHeight = input<number>(600);
+  public fullscreenEnabled = input<boolean>(false);
+  public onResize = output<void>();
 
   private currentController: InputController;
-
-  setController(controller: InputController) {
-    this.currentController.exit();
-    this.currentController = controller;
-    this.currentController.enter();
-  }
 
   constructor() {
     this.currentController = new DefaultController();
     this.currentController.enter();
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     this.ctx = this.canvas.nativeElement.getContext('2d')!;
     if (!this.ctx) {
       return;
@@ -37,22 +44,59 @@ export class CanvasComponent implements AfterViewInit {
     this.ctx.imageSmoothingEnabled = false;
   }
 
-  onCanvasMouseDown(event: MouseEvent) {
+  public setController(controller: InputController) {
+    this.currentController.exit();
+    this.currentController = controller;
+    this.currentController.enter();
+  }
+
+  public toggleFullscreenMode() {
+    const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+    if (!isFullscreen) {
+      this.canvas.nativeElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  @HostListener('window:resize')
+  protected resize() {
+    if (!this.fullscreenEnabled()) {
+      return;
+    }
+    const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+
+    const canvas = this.canvas.nativeElement;
+    if (isFullscreen) {
+      canvas.width = screen.width;
+      canvas.height = screen.height;
+      this.isFullscreen.set(true);
+    } else {
+      canvas.width = this.canvasWidth();
+      canvas.height = this.canvasHeight();
+      this.isFullscreen.set(false);
+    }
+    this.onResize.emit();
+    this.ngAfterViewInit();
+  }
+
+  protected onCanvasMouseDown(event: MouseEvent) {
     this.currentController.onMouseDown(event);
   }
-  onCanvasMouseUp(event: MouseEvent) {
+  protected onCanvasMouseUp(event: MouseEvent) {
     this.currentController.onMouseUp(event);
   }
-  onCanvasMouseWheel(event: WheelEvent) {
+
+  protected onCanvasMouseWheel(event: WheelEvent) {
     event.preventDefault();
     this.currentController.onMouseWheel(event);
   }
 
-  onCanvasMouseMove(event: MouseEvent) {
+  protected onCanvasMouseMove(event: MouseEvent) {
     this.currentController.onMouseMove(event);
   }
 
-  onCanvasMouseLeave(event: MouseEvent) {
+  protected onCanvasMouseLeave(event: MouseEvent) {
     this.currentController.onMouseLeave(event);
   }
 }

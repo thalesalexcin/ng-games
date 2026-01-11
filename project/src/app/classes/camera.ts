@@ -12,7 +12,7 @@ export class Camera {
 
   constructor(private viewportWidth: number, private viewportHeight: number) {}
 
-  apply(ctx: CanvasRenderingContext2D) {
+  public apply(ctx: CanvasRenderingContext2D) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
@@ -20,7 +20,12 @@ export class Camera {
     ctx.translate(-this.position.x, -this.position.y);
   }
 
-  screenToWorld(point: Point) {
+  public resizeViewport(newWidth: number, newHeight: number) {
+    this.viewportWidth = newWidth;
+    this.viewportHeight = newHeight;
+  }
+
+  public screenToWorld(point: Point) {
     //TODO use a matrix here
     return {
       x: (point.x - this.viewportWidth / 2) / this.zoom + this.position.x,
@@ -28,7 +33,7 @@ export class Camera {
     };
   }
 
-  worldToScreen(point: Point) {
+  public worldToScreen(point: Point) {
     //TODO use a matrix here
     return {
       x: (point.x - this.position.x) * this.zoom + this.viewportWidth / 2,
@@ -36,12 +41,12 @@ export class Camera {
     };
   }
 
-  move(worldDelta: Point) {
+  public move(worldDelta: Point) {
     this.position.x += worldDelta.x * -1;
     this.position.y += worldDelta.y * -1;
   }
 
-  constraint(constraints: CameraConstraints) {
+  public constraint(constraints: CameraConstraints) {
     let widthLimits = (this.viewportWidth - constraints.width / this.zoom) / 2;
     this.position.x = MathEx.clamp(this.position.x, -widthLimits, widthLimits);
 
@@ -49,7 +54,7 @@ export class Camera {
     this.position.y = MathEx.clamp(this.position.y, -heightLimits, heightLimits);
   }
 
-  zoomAt(screenPoint: Point, zoomDelta: number) {
+  public zoomAt(screenPoint: Point, zoomDelta: number) {
     let world = this.screenToWorld(screenPoint);
 
     this.zoom += zoomDelta;

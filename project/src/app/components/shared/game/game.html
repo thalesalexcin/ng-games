@@ -1,2 +1,7 @@
-<app-canvas [canvasWidth]="canvasWidth()" [canvasHeight]="canvasHeight()"></app-canvas>
+<app-canvas
+  (onResize)="onCanvasResize()"
+  [canvasWidth]="canvasWidth()"
+  [canvasHeight]="canvasHeight()"
+  [fullscreenEnabled]="fullscreenEnabled()"
+></app-canvas>
 <ng-content></ng-content>
