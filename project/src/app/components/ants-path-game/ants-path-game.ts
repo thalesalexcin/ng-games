@@ -35,9 +35,12 @@ export class AntsPathGameMode extends GameMode {
     controller.onWorldClickMove = (worldPos) => this.antPathLogic.addAnt(worldPos, 1);
   }
 
-  override update(deltaTime: number): void {
+  override fixedUpdate(deltaTime: number): void {
     this.antPathLogic.update(deltaTime);
   }
+
+  override update(deltaTime: number): void {}
+
   override draw(ctx: CanvasRenderingContext2D): void {
     this.antPathLogic.draw(ctx);
   }

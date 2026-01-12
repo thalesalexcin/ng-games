@@ -65,9 +65,12 @@ export class GameOfLifeGameMode extends GameMode {
     };
   }
 
-  override update(deltaTime: number): void {
+  override fixedUpdate(deltaTime: number): void {
     this.gameOfLife.update(deltaTime);
   }
+
+  override update(deltaTime: number): void {}
+
   override draw(ctx: CanvasRenderingContext2D): void {
     this.gameOfLife.draw(ctx);
   }

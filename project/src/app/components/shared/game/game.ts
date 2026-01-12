@@ -40,9 +40,6 @@ export class GameComponent implements AfterViewInit {
     return this.canvasComponent().ctx;
   }
 
-  private FRAME_DURATION = 1 / 60; //TODO make it 60 fps and on it's own component ms per frame
-  private lastFrameTime = 0;
-
   public isPaused() {
     return this._isPaused;
   }
@@ -98,21 +95,34 @@ export class GameComponent implements AfterViewInit {
     }
   }
 
+  private lastFrameTime = 0;
+  private cumulatedDeltaTime: number = 0;
+  private fixedDeltaTime: number = 1 / 60;
   private gameLoop(time: number) {
-    const deltaTime = (time - this.lastFrameTime) / 1000;
-    if (deltaTime > this.FRAME_DURATION) {
-      this.lastFrameTime = time;
-      if (!this._isPaused) {
-        this.update(deltaTime);
+    if (!this._isPaused) {
+      const deltaTime = (time - this.lastFrameTime) / 1000;
+      this.cumulatedDeltaTime += deltaTime;
+      while (this.cumulatedDeltaTime >= this.fixedDeltaTime) {
+        this.fixedUpdate(this.fixedDeltaTime);
+        this.cumulatedDeltaTime -= this.fixedDeltaTime;
       }
+
+      this.update(deltaTime);
+      this.draw();
     }
-    this.draw();
     requestAnimationFrame((t) => this.gameLoop(t));
+    this.lastFrameTime = time;
   }
 
   private update(deltaTime: number) {
-    for (let entity of this.gameModes()) {
-      entity.update(deltaTime);
+    for (let gameMode of this.gameModes()) {
+      gameMode.update(deltaTime);
+    }
+  }
+
+  private fixedUpdate(deltaTime: number) {
+    for (let gameMode of this.gameModes()) {
+      gameMode.fixedUpdate(deltaTime);
     }
   }
 
