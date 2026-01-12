@@ -53,6 +53,7 @@ export class GameComponent implements AfterViewInit {
       this.initGameComponents();
     });
     this.zone.runOutsideAngular(() => {
+      this.lastFrameTime = performance.now();
       requestAnimationFrame((t) => this.gameLoop(t));
     });
   }
