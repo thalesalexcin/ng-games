@@ -109,8 +109,8 @@ export class GameComponent implements AfterViewInit {
       }
 
       this.update(deltaTime);
-      this.draw();
     }
+    this.draw();
     requestAnimationFrame((t) => this.gameLoop(t));
     this.lastFrameTime = time;
   }
