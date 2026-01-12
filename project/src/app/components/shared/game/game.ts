@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   contentChildren,
+  HostListener,
   inject,
   Injector,
   input,
@@ -105,6 +106,18 @@ export class GameComponent implements AfterViewInit, OnDestroy {
   private lastFrameTime = 0;
   private cumulatedDeltaTime: number = 0;
   private fixedDeltaTime: number = 1 / 60;
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange() {
+    if (document.hidden) {
+      this._isPaused = true;
+    } else {
+      this._isPaused = false;
+      this.lastFrameTime = performance.now();
+      this.cumulatedDeltaTime = 0;
+    }
+  }
+
   private gameLoop(time: number) {
     if (!this._isPaused) {
       const deltaTime = (time - this.lastFrameTime) / 1000;
