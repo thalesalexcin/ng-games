@@ -6,6 +6,7 @@ import {
   Injector,
   input,
   NgZone,
+  OnDestroy,
   runInInjectionContext,
   signal,
   viewChild,
@@ -21,7 +22,7 @@ import { GAME_MODE, GameMode } from '../../../classes/game-mode';
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
-export class GameComponent implements AfterViewInit {
+export class GameComponent implements AfterViewInit, OnDestroy {
   public canvasWidth = input<number>(800);
   public canvasHeight = input<number>(600);
   public fullscreenEnabled = input<boolean>(false);
@@ -48,14 +49,19 @@ export class GameComponent implements AfterViewInit {
     this._isPaused = value;
   }
 
+  private animationFrameId: number = 0;
   public ngAfterViewInit(): void {
     runInInjectionContext(this.injector, () => {
       this.initGameComponents();
     });
     this.zone.runOutsideAngular(() => {
       this.lastFrameTime = performance.now();
-      requestAnimationFrame((t) => this.gameLoop(t));
+      this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
     });
+  }
+
+  ngOnDestroy(): void {
+    cancelAnimationFrame(this.animationFrameId);
   }
 
   public toggleFullscreen() {
@@ -111,7 +117,7 @@ export class GameComponent implements AfterViewInit {
       this.update(deltaTime);
     }
     this.draw();
-    requestAnimationFrame((t) => this.gameLoop(t));
+    this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
     this.lastFrameTime = time;
   }
 
