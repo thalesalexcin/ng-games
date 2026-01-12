@@ -31,7 +31,8 @@ export class AntsPathGameMode extends GameMode {
   }
 
   override initController(controller: CameraController): void {
-    controller.onWorldClick = (worldPos) => this.antPathLogic.addAnt(worldPos, 10);
+    controller.onWorldClick = (worldPos) => this.antPathLogic.addAnt(worldPos, 1);
+    controller.onWorldClickMove = (worldPos) => this.antPathLogic.addAnt(worldPos, 1);
   }
 
   override update(deltaTime: number): void {

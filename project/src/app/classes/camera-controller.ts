@@ -3,13 +3,15 @@ import { Camera, CameraConstraints } from './camera';
 import { InputController } from './input-controller';
 
 export class CameraController extends InputController {
-  private isMouseButtonDown: boolean = false;
+  public onWorldClick?: (worldPosition: Point) => void;
+  public onWorldClickMove?: (worldPosition: Point) => void;
+  public onWorldHoverEnter?: (worldPosition: Point) => void;
+  public onWorldHoverLeave?: () => void;
+
+  private isMiddleMouseButtonDown: boolean = false;
+  private isLeftMouseButtonDown: boolean = false;
   private lastPos: Point = { x: 0, y: 0 };
   private currentScreenPos: Point = { x: 0, y: 0 };
-
-  onWorldClick?: (worldPosition: Point) => void;
-  onWorldHoverEnter?: (worldPosition: Point) => void;
-  onWorldHoverLeave?: () => void;
 
   constructor(private camera: Camera, private constraints: CameraConstraints) {
     super();
@@ -20,12 +22,13 @@ export class CameraController extends InputController {
 
   override onMouseDown(event: MouseEvent): void {
     if (event.button == 1) {
-      this.isMouseButtonDown = true;
+      this.isMiddleMouseButtonDown = true;
       this.lastPos = { x: event.offsetX, y: event.offsetY };
     }
 
     //TODO what about onMouseUp ?
     if (event.button == 0) {
+      this.isLeftMouseButtonDown = true;
       let screenPos = { x: event.offsetX, y: event.offsetY };
       let currentWorldPos = this.camera.screenToWorld(screenPos);
       if (this.onWorldClick) {
@@ -39,8 +42,11 @@ export class CameraController extends InputController {
   }
 
   override onMouseUp(event: MouseEvent): void {
+    if (event.button == 0) {
+      this.isLeftMouseButtonDown = false;
+    }
     if (event.button == 1) {
-      this.isMouseButtonDown = false;
+      this.isMiddleMouseButtonDown = false;
     }
   }
 
@@ -55,7 +61,12 @@ export class CameraController extends InputController {
     if (this.onWorldHoverEnter) {
       this.onWorldHoverEnter(currentWorldPos);
     }
-    if (this.isMouseButtonDown) {
+    if (this.isLeftMouseButtonDown) {
+      if (this.onWorldClickMove) {
+        this.onWorldClickMove(currentWorldPos);
+      }
+    }
+    if (this.isMiddleMouseButtonDown) {
       let lastWorldPos = this.camera.screenToWorld(this.lastPos);
       let worldDiff: Point = {
         x: currentWorldPos.x - lastWorldPos.x,
@@ -69,7 +80,8 @@ export class CameraController extends InputController {
   }
 
   override onMouseLeave(event: MouseEvent): void {
-    this.isMouseButtonDown = false;
+    this.isMiddleMouseButtonDown = false;
+    this.isLeftMouseButtonDown = false;
     if (this.onWorldHoverLeave) {
       this.onWorldHoverLeave();
     }

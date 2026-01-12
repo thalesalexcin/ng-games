@@ -56,6 +56,20 @@ export class GameOfLifeLogic {
     }
   }
 
+  setAlive(worldPos: Point) {
+    let coords = this.worldToGridPos(worldPos);
+
+    let isValidCoords =
+      coords.row >= 0 &&
+      coords.row < this.rows &&
+      coords.column >= 0 &&
+      coords.column < this.columns;
+    const index = coords.row * this.columns + coords.column;
+    if (isValidCoords) {
+      this.currentState[index] = 1;
+    }
+  }
+
   toggleAlive(worldPos: Point): void {
     let coords = this.worldToGridPos(worldPos);
 

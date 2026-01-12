@@ -53,6 +53,10 @@ export class GameOfLifeGameMode extends GameMode {
       this.gameOfLife.toggleAlive(worldPos);
     };
 
+    controller.onWorldClickMove = (worldPos: Point) => {
+      this.gameOfLife.setAlive(worldPos);
+    };
+
     controller.onWorldHoverEnter = (worldPos: Point) => {
       this.gameOfLife.setHoverWorldPosition(worldPos);
     };
