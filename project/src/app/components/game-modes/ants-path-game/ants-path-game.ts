@@ -1,8 +1,8 @@
-import { Point } from '../../models/point';
-import { AntsPath } from '../../classes/ants-path';
+import { Point } from '../../../models/point';
+import { AntsPath } from '../../../classes/ants-path';
 import { Component } from '@angular/core';
-import { GAME_MODE, GameMode } from '../../classes/game-mode';
-import { CameraController } from '../../classes/camera-controller';
+import { GAME_MODE, GameMode } from '../../../classes/game-mode';
+import { CameraController } from '../../../classes/camera-controller';
 
 @Component({
   selector: 'app-ants-path-game',

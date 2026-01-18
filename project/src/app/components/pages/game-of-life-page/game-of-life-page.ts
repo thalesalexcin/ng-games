@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
-import { GameComponent } from '../shared/game/game';
-import { RandomService } from '../../services/random-service';
-import { GameOfLifeGameMode } from '../game-of-life-game/game-of-life-game';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { GameOfLifeGameMode } from '../../game-modes/game-of-life-game/game-of-life-game';
+import { GameComponent } from '../../shared/game/game';
+import { RandomService } from '../../../services/random-service';
 
 @Component({
   selector: 'app-game-of-life-page',

@@ -1,6 +1,6 @@
 import { Component, OnInit, viewChild } from '@angular/core';
-import { GameComponent } from '../shared/game/game';
-import { AntsPathGameMode } from '../ants-path-game/ants-path-game';
+import { AntsPathGameMode } from '../../game-modes/ants-path-game/ants-path-game';
+import { GameComponent } from '../../shared/game/game';
 
 @Component({
   selector: 'app-ants-path-page',

@@ -1,8 +1,8 @@
 import { Component, input } from '@angular/core';
-import { GAME_MODE, GameMode } from '../../classes/game-mode';
-import { GameOfLifeLogic } from '../../classes/game-of-life';
-import { Point } from '../../models/point';
-import { CameraController } from '../../classes/camera-controller';
+import { GAME_MODE, GameMode } from '../../../classes/game-mode';
+import { GameOfLifeLogic } from '../../../classes/game-of-life';
+import { Point } from '../../../models/point';
+import { CameraController } from '../../../classes/camera-controller';
 
 @Component({
   selector: 'app-game-of-life-game',
