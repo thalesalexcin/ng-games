@@ -1,7 +1,7 @@
 {
-  "scope": "/",
-  "name": "Ng Games",
-  "short_name": "NgGames",
+  "scope": "./",
+  "name": "Ng Games2",
+  "short_name": "NgGames2",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
