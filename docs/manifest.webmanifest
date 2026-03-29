@@ -2,7 +2,7 @@
   "scope": "./",
   "name": "Ng Games2",
   "short_name": "NgGames2",
-  "start_url": "/",
+  "start_url": "./#/ants-path",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#1976d2",
