@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1774771699369,
+  "timestamp": 1774779654004,
   "index": "/ng-games/index.html",
   "assetGroups": [
     {
@@ -59,7 +59,7 @@
     "/ng-games/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
     "/ng-games/index.html": "a057dc14cf6d3dd07dc74e4f9026e750e5a32826",
     "/ng-games/main-RMKJXUZG.js": "714af5421919ad3ae789df751484384b24b0464f",
-    "/ng-games/manifest.webmanifest": "48da93ebc3320aa417cc1099ccba1042d6ba4673",
+    "/ng-games/manifest.webmanifest": "e75f927257fe1c1b00e73ccc61807249c41c0806",
     "/ng-games/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
     "/ng-games/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
     "/ng-games/media/fa-brands-400-E7XUCEPO.woff2": "ed94030ca212e1857a6014496e7a6a43e64789e4",
