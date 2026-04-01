@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1774780924633,
+  "timestamp": 1775071532214,
   "index": "/ng-games/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/ng-games/favicon.ico",
         "/ng-games/index.html",
-        "/ng-games/main-RMKJXUZG.js",
+        "/ng-games/main-AFQ2MUL6.js",
         "/ng-games/manifest.webmanifest",
         "/ng-games/scripts-TTWY4XDY.js",
         "/ng-games/styles-S6UPFY7W.css"
@@ -57,8 +57,8 @@
     "/ng-games/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
     "/ng-games/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
     "/ng-games/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
-    "/ng-games/index.html": "9f7caf3cc0277b7cb6b52ca9c2311cc6bacc27cc",
-    "/ng-games/main-RMKJXUZG.js": "714af5421919ad3ae789df751484384b24b0464f",
+    "/ng-games/index.html": "c8973673152454aa8b2eb21741a99df33003c792",
+    "/ng-games/main-AFQ2MUL6.js": "03321ceb052e4ae545852bd4b4cc3a6ff38b939d",
     "/ng-games/manifest.webmanifest": "10cacdee076ad6750c9f2b3e096379669f3c9158",
     "/ng-games/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
     "/ng-games/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
