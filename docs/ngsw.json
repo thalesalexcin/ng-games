@@ -1,7 +1,7 @@
 {
   "configVersion": 1,
-  "timestamp": 1775073463183,
-  "index": "/ng-games/index.html",
+  "timestamp": 1775161069213,
+  "index": "/ng-games/#ants-path/index.html",
   "assetGroups": [
     {
       "name": "app",
@@ -11,12 +11,12 @@
         "ignoreVary": true
       },
       "urls": [
-        "/ng-games/favicon.ico",
-        "/ng-games/index.html",
-        "/ng-games/main-KYYEERI3.js",
-        "/ng-games/manifest.webmanifest",
-        "/ng-games/scripts-TTWY4XDY.js",
-        "/ng-games/styles-S6UPFY7W.css"
+        "/ng-games/#ants-path/favicon.ico",
+        "/ng-games/#ants-path/index.html",
+        "/ng-games/#ants-path/main-RMKJXUZG.js",
+        "/ng-games/#ants-path/manifest.webmanifest",
+        "/ng-games/#ants-path/scripts-TTWY4XDY.js",
+        "/ng-games/#ants-path/styles-IOG54RPI.css"
       ],
       "patterns": []
     },
@@ -28,46 +28,46 @@
         "ignoreVary": true
       },
       "urls": [
-        "/ng-games/icons/icon-128x128.png",
-        "/ng-games/icons/icon-144x144.png",
-        "/ng-games/icons/icon-152x152.png",
-        "/ng-games/icons/icon-192x192.png",
-        "/ng-games/icons/icon-384x384.png",
-        "/ng-games/icons/icon-512x512.png",
-        "/ng-games/icons/icon-72x72.png",
-        "/ng-games/icons/icon-96x96.png",
-        "/ng-games/media/bootstrap-icons-CVBWLLHT.woff2",
-        "/ng-games/media/bootstrap-icons-VQNJTM6Q.woff",
-        "/ng-games/media/fa-brands-400-E7XUCEPO.woff2",
-        "/ng-games/media/fa-regular-400-LBQEIAJB.woff2",
-        "/ng-games/media/fa-solid-900-XY6737PV.woff2",
-        "/ng-games/media/fa-v4compatibility-RGK6JUWD.woff2"
+        "/ng-games/#ants-path/icons/icon-128x128.png",
+        "/ng-games/#ants-path/icons/icon-144x144.png",
+        "/ng-games/#ants-path/icons/icon-152x152.png",
+        "/ng-games/#ants-path/icons/icon-192x192.png",
+        "/ng-games/#ants-path/icons/icon-384x384.png",
+        "/ng-games/#ants-path/icons/icon-512x512.png",
+        "/ng-games/#ants-path/icons/icon-72x72.png",
+        "/ng-games/#ants-path/icons/icon-96x96.png",
+        "/ng-games/#ants-path/media/bootstrap-icons-CVBWLLHT.woff2",
+        "/ng-games/#ants-path/media/bootstrap-icons-VQNJTM6Q.woff",
+        "/ng-games/#ants-path/media/fa-brands-400-E7XUCEPO.woff2",
+        "/ng-games/#ants-path/media/fa-regular-400-LBQEIAJB.woff2",
+        "/ng-games/#ants-path/media/fa-solid-900-XY6737PV.woff2",
+        "/ng-games/#ants-path/media/fa-v4compatibility-RGK6JUWD.woff2"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "/ng-games/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/ng-games/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
-    "/ng-games/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
-    "/ng-games/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
-    "/ng-games/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
-    "/ng-games/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
-    "/ng-games/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
-    "/ng-games/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
-    "/ng-games/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
-    "/ng-games/index.html": "2c167a457e2eb7c9af601425377d8a905a3efc25",
-    "/ng-games/main-KYYEERI3.js": "958bc4a31e7709f32e77893e5e4a022bbe3b0539",
-    "/ng-games/manifest.webmanifest": "c2d6a88b57f0ac88740dd2ed212702380a3e9f05",
-    "/ng-games/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
-    "/ng-games/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
-    "/ng-games/media/fa-brands-400-E7XUCEPO.woff2": "ed94030ca212e1857a6014496e7a6a43e64789e4",
-    "/ng-games/media/fa-regular-400-LBQEIAJB.woff2": "a1e663df38f3616e677a2ffd0c20cc58c87b7703",
-    "/ng-games/media/fa-solid-900-XY6737PV.woff2": "49c2d746beabbaa5b1a58d660b217feb34272636",
-    "/ng-games/media/fa-v4compatibility-RGK6JUWD.woff2": "ed95837812146abe9cb9293922f80205785e8c6b",
-    "/ng-games/scripts-TTWY4XDY.js": "59aa489af6324127a3d773836250da08639d4b26",
-    "/ng-games/styles-S6UPFY7W.css": "a3816cf6582b02f0cbe93b697b7c9696dad21b78"
+    "/ng-games/#ants-path/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/ng-games/#ants-path/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
+    "/ng-games/#ants-path/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
+    "/ng-games/#ants-path/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
+    "/ng-games/#ants-path/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
+    "/ng-games/#ants-path/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
+    "/ng-games/#ants-path/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
+    "/ng-games/#ants-path/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
+    "/ng-games/#ants-path/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
+    "/ng-games/#ants-path/index.html": "87baff07c0852d07a369e6b2b14df18721b5180b",
+    "/ng-games/#ants-path/main-RMKJXUZG.js": "714af5421919ad3ae789df751484384b24b0464f",
+    "/ng-games/#ants-path/manifest.webmanifest": "48da93ebc3320aa417cc1099ccba1042d6ba4673",
+    "/ng-games/#ants-path/media/bootstrap-icons-CVBWLLHT.woff2": "b441fcff939e24fa0906a37b7788788b9fddbb68",
+    "/ng-games/#ants-path/media/bootstrap-icons-VQNJTM6Q.woff": "762010c79b4a05e1131fc8fb3b1aeff324d8033f",
+    "/ng-games/#ants-path/media/fa-brands-400-E7XUCEPO.woff2": "ed94030ca212e1857a6014496e7a6a43e64789e4",
+    "/ng-games/#ants-path/media/fa-regular-400-LBQEIAJB.woff2": "a1e663df38f3616e677a2ffd0c20cc58c87b7703",
+    "/ng-games/#ants-path/media/fa-solid-900-XY6737PV.woff2": "49c2d746beabbaa5b1a58d660b217feb34272636",
+    "/ng-games/#ants-path/media/fa-v4compatibility-RGK6JUWD.woff2": "ed95837812146abe9cb9293922f80205785e8c6b",
+    "/ng-games/#ants-path/scripts-TTWY4XDY.js": "59aa489af6324127a3d773836250da08639d4b26",
+    "/ng-games/#ants-path/styles-IOG54RPI.css": "f17488ffb9482cfafcebf550a1638f2eb58112b4"
   },
   "navigationUrls": [
     {

@@ -1,11 +1,9 @@
 {
-  "scope": "./",
-  "name": "Ng Games",
-  "short_name": "NgGames",
-  "start_url": "./#/ants-path",
+  "name": "ng-games",
+  "short_name": "ng-games",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#1976d2",
+  "scope": "./",
+  "start_url": "./",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
