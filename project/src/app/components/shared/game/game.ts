@@ -34,6 +34,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
   private zone = inject(NgZone);
   private injector = inject(Injector);
   private _isPaused = false;
+  private _isPausedInternal = false;
 
   private camera!: Camera;
   private cameraController!: CameraController;
@@ -43,7 +44,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
   }
 
   public isPaused() {
-    return this._isPaused;
+    return this._isPaused || this._isPausedInternal;
   }
 
   public setPaused(value: boolean) {
@@ -110,16 +111,16 @@ export class GameComponent implements AfterViewInit, OnDestroy {
   @HostListener('document:visibilitychange')
   onVisibilityChange() {
     if (document.hidden) {
-      this._isPaused = true;
+      this._isPausedInternal = true;
     } else {
-      this._isPaused = false;
+      this._isPausedInternal = false;
       this.lastFrameTime = performance.now();
       this.cumulatedDeltaTime = 0;
     }
   }
 
   private gameLoop(time: number) {
-    if (!this._isPaused) {
+    if (!this.isPaused()) {
       const deltaTime = (time - this.lastFrameTime) / 1000;
       this.cumulatedDeltaTime += deltaTime;
       while (this.cumulatedDeltaTime >= this.fixedDeltaTime) {
