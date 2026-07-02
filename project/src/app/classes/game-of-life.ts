@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { RandomService } from '../services/random-service';
 import { Point } from '../models/point';
 import { GridCoords } from '../models/grid-coords';
+import { MathEx } from './utils/math-ex';
 
 export class GameOfLifeLogic {
   private currentState!: Uint8Array;
@@ -30,7 +31,7 @@ export class GameOfLifeLogic {
     private width: number,
     private height: number,
     private worldOffset: Point,
-    private aspectRatio: number
+    private aspectRatio: number,
   ) {
     this.randomService = inject(RandomService);
     this.rows = this.height;
@@ -115,26 +116,26 @@ export class GameOfLifeLogic {
 
   private nextGeneration() {
     const columns = this.columns;
+    const rows = this.rows;
     let aliveCount = 0;
-
     for (let currentRow = 0; currentRow < this.height; currentRow++) {
       for (let currentColumn = 0; currentColumn < this.width; currentColumn++) {
-        //TODO optimised but if it goes out of the screen it wont teleport to the other side, not important for now
-        const rowLeft = (currentRow - 1) * columns;
-        const rowRight = (currentRow + 1) * columns;
-        const rowCurrent = currentRow * columns;
-        const columnUp = currentColumn - 1;
-        const columnDown = currentColumn + 1;
+        const rowCurrent = currentRow;
+        const rowUp = MathEx.mod(currentRow - 1, rows);
+        const rowDown = MathEx.mod(currentRow + 1, rows);
+        const columnCurrent = currentColumn;
+        const columnRight = MathEx.mod(currentColumn - 1, columns);
+        const columnLeft = MathEx.mod(currentColumn + 1, columns);
         var dataRef = this.currentState;
         aliveCount =
-          dataRef[rowLeft + columnUp] +
-          dataRef[rowLeft + currentColumn] +
-          dataRef[rowLeft + columnDown] +
-          dataRef[rowCurrent + columnUp] +
-          dataRef[rowCurrent + columnDown] +
-          dataRef[rowRight + columnUp] +
-          dataRef[rowRight + currentColumn] +
-          dataRef[rowRight + columnDown];
+          dataRef[rowUp * columns + columnRight] +
+          dataRef[rowUp * columns + columnCurrent] +
+          dataRef[rowUp * columns + columnLeft] +
+          dataRef[rowCurrent * columns + columnRight] +
+          dataRef[rowCurrent * columns + columnLeft] +
+          dataRef[rowDown * columns + columnRight] +
+          dataRef[rowDown * columns + columnCurrent] +
+          dataRef[rowDown * columns + columnLeft];
 
         const index = currentRow * this.width + currentColumn;
         this.nextState[index] = aliveCount == 3 || (dataRef[index] && aliveCount == 2) ? 1 : 0;
@@ -169,7 +170,7 @@ export class GameOfLifeLogic {
       this.worldOffset.x * this.aspectRatio,
       this.worldOffset.y * this.aspectRatio,
       this.imageBuffer.width * this.aspectRatio,
-      this.imageBuffer.height * this.aspectRatio
+      this.imageBuffer.height * this.aspectRatio,
     );
   }
 }

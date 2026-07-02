@@ -44,7 +44,7 @@ export class GameOfLifeGameMode extends GameMode {
       this.gridWidth(),
       this.gridHeight(),
       worldOffset,
-      aspectRatio
+      aspectRatio,
     );
   }
 
